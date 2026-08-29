@@ -1,4 +1,11 @@
 .venv/
+.env
 __pycache__/
 *.py[cod]
 .pytest_cache/
+experiments/
+.venv/
+.env
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
