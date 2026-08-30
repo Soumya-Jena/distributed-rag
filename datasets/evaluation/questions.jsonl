@@ -1,0 +1,6 @@
+{"id":"q001","question":"How does PostgreSQL streaming replication transfer changes to a standby?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["WAL","standby"]}
+{"id":"q002","question":"What role does MVCC play in PostgreSQL transaction visibility?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["MVCC"]}
+{"id":"q003","question":"How does Kubernetes select a node for a Pod?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["scheduler","node"]}
+{"id":"q004","question":"What is Kafka primarily used for?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["event","stream"]}
+{"id":"q005","question":"What is the capital of Japan?","answerable":false,"relevant_sources":[],"expected_keywords":[]}
+{"id":"q006","question":"Who won the 2022 FIFA World Cup?","answerable":false,"relevant_sources":[],"expected_keywords":[]}

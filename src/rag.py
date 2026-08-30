@@ -1,13 +1,6 @@
 import argparse
 
-from time import perf_counter
-
-from src.generator import LocalGenerator
-from src.prompt import (
-    SYSTEM_PROMPT,
-    build_user_prompt,
-)
-from src.retriever import Retriever
+from src.rag_service import RAGService
 
 
 def main():
@@ -15,8 +8,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "question",
-        type=str,
+        "question"
     )
 
     parser.add_argument(
@@ -25,130 +17,25 @@ def main():
         default=5,
     )
 
-    parser.add_argument(
-        "--show-context",
-        action="store_true",
-    )
-
     args = parser.parse_args()
 
-    # ----------------------------------
-    # Step 1: Retrieval
-    # ----------------------------------
+    rag = RAGService()
 
-    retriever = Retriever()
-
-    retrieval_start = perf_counter()
-
-    chunks = retriever.search(
+    result = rag.answer(
         args.question,
         args.top_k,
     )
 
-    retrieval_seconds = (
-        perf_counter()
-        - retrieval_start
-    )
+    print("\nANSWER")
+    print("======")
 
-    if not chunks:
+    print(result.answer)
 
-        print(
-            "No relevant chunks were retrieved."
-        )
-
-        return
-
-    # ----------------------------------
-    # Step 2: Prompt construction
-    # ----------------------------------
-
-    user_prompt = build_user_prompt(
-        args.question,
-        chunks,
-    )
-
-    if args.show_context:
-
-        print(
-            "\nRETRIEVED CONTEXT"
-        )
-
-        print(
-            "================="
-        )
-
-        print(
-            user_prompt
-        )
-
-    # ----------------------------------
-    # Step 3: Generation
-    # ----------------------------------
-
-    generator = LocalGenerator()
-
-    messages = [
-        {
-            "role": "system",
-            "content": SYSTEM_PROMPT,
-        },
-        {
-            "role": "user",
-            "content": user_prompt,
-        },
-    ]
-
-    print(
-        "\n\nANSWER"
-    )
-
-    print(
-        "======"
-    )
-
-    generation_start = perf_counter()
-
-    answer_parts = []
-
-    for text_fragment in generator.generate_stream(
-        messages
-    ):
-
-        print(
-            text_fragment,
-            end="",
-            flush=True,
-        )
-
-        answer_parts.append(
-            text_fragment
-        )
-
-    answer = "".join(
-        answer_parts
-    ).strip()
-
-    generation_seconds = (
-        perf_counter()
-        - generation_start
-    )
-
-    print()
-
-    # ----------------------------------
-    # Sources and performance
-    # ----------------------------------
-
-    print(
-        "\n\nSOURCES"
-    )
-
-    print(
-        "======="
-    )
+    print("\nSOURCES")
+    print("=======")
 
     for index, chunk in enumerate(
-        chunks,
+        result.chunks,
         start=1,
     ):
 
@@ -156,29 +43,21 @@ def main():
             f"[S{index}] "
             f"{chunk.title} | "
             f"chunk={chunk.chunk_index} | "
-            f"similarity={chunk.similarity:.4f}"
+            f"similarity="
+            f"{chunk.similarity:.4f}"
         )
 
-        print(
-            f"     {chunk.source_path}"
-        )
-
-    print(
-        "\n\nPERFORMANCE"
-    )
-
-    print(
-        "==========="
-    )
+    print("\nPERFORMANCE")
+    print("===========")
 
     print(
         f"Retrieval  : "
-        f"{retrieval_seconds:.3f} sec"
+        f"{result.retrieval_seconds:.3f}s"
     )
 
     print(
         f"Generation : "
-        f"{generation_seconds:.3f} sec"
+        f"{result.generation_seconds:.3f}s"
     )
 
 
