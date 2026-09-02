@@ -1,0 +1,5 @@
+id,question,hit@1,hit@3,hit@5,recall@5,reciprocal_rank,top_1_source,top_1_similarity,retrieval_seconds
+q001,How does PostgreSQL streaming replication transfer changes to a standby?,1,1,1,1.0,1.0,postgres-replication.md,0.8083774447441101,0.06918220000807196
+q002,What role does MVCC play in PostgreSQL transaction visibility?,1,1,1,1.0,1.0,postgres-mvcc.md,0.6462655067443848,0.06354210001882166
+q003,How does Kubernetes select a node for a Pod?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6928604015278387,0.08036829996854067
+q004,What is Kafka primarily used for?,1,1,1,1.0,1.0,kafka-overview.md,0.5349891068031588,0.0758034999598749

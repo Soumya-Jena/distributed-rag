@@ -17,6 +17,8 @@ class LocalGenerator:
 
     def __init__(self):
 
+        self.last_input_token_count = 0
+
         print(
             f"Loading generation model: "
             f"{GENERATION_MODEL}"
@@ -85,6 +87,10 @@ class LocalGenerator:
             self.tokenizer,
             skip_prompt=True,
             skip_special_tokens=True,
+        )
+
+        self.last_input_token_count = int(
+            inputs["input_ids"].shape[-1]
         )
 
         generation_arguments = {

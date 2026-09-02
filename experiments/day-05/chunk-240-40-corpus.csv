@@ -1,0 +1,2 @@
+label,chunk_size,chunk_overlap,chunks,avg_tokens,min_tokens,max_tokens,relation_bytes,ingestion_seconds
+chunk-240-40,240,40,8,169.625,70,240,294912,24.1634382000193

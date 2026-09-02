@@ -23,15 +23,33 @@ GENERATION_MODEL = os.getenv(
 )
 
 
-CHUNK_SIZE = 200
+CHUNK_SIZE = int(
+    os.getenv(
+        "CHUNK_SIZE",
+        "200",
+    )
+)
 
-CHUNK_OVERLAP = 40
+CHUNK_OVERLAP = int(
+    os.getenv(
+        "CHUNK_OVERLAP",
+        "40",
+    )
+)
 
 
 RETRIEVAL_TOP_K = int(
     os.getenv(
         "RETRIEVAL_TOP_K",
         "5",
+    )
+)
+
+
+MIN_RETRIEVAL_SIMILARITY = float(
+    os.getenv(
+        "MIN_RETRIEVAL_SIMILARITY",
+        "0.30",
     )
 )
 

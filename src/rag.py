@@ -60,6 +60,11 @@ def main():
         f"{result.generation_seconds:.3f}s"
     )
 
+    print(
+        f"Prompt tokens: "
+        f"{result.prompt_tokens}"
+    )
+
 
 if __name__ == "__main__":
     main()

@@ -3,9 +3,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-experiments/
-.venv/
-.env
-__pycache__/
-*.pyc
 .ipynb_checkpoints/
+experiments/*
+!experiments/day-05/
+!experiments/day-05/**

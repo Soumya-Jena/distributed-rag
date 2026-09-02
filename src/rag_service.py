@@ -3,6 +3,10 @@ from time import perf_counter
 
 from src.generator import LocalGenerator
 
+from src.config import (
+    MIN_RETRIEVAL_SIMILARITY,
+)
+
 from src.prompt import (
     SYSTEM_PROMPT,
     build_user_prompt,
@@ -26,6 +30,8 @@ class RAGResult:
     retrieval_seconds: float
 
     generation_seconds: float
+
+    prompt_tokens: int
 
 
 class RAGService:
@@ -58,6 +64,13 @@ class RAGService:
             top_k,
         )
 
+        chunks = [
+            chunk
+            for chunk in chunks
+            if chunk.similarity
+            >= MIN_RETRIEVAL_SIMILARITY
+        ]
+
         retrieval_seconds = (
             perf_counter()
             - start
@@ -78,6 +91,7 @@ class RAGService:
                     retrieval_seconds
                 ),
                 generation_seconds=0.0,
+                prompt_tokens=0,
             )
 
         # -------------------------
@@ -124,5 +138,8 @@ class RAGService:
             ),
             generation_seconds=(
                 generation_seconds
+            ),
+            prompt_tokens=(
+                self.generator.last_input_token_count
             ),
         )
