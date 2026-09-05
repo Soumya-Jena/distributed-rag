@@ -34,9 +34,10 @@ def valid_label(value):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, type=valid_label)
+    parser.add_argument("--output-dir", type=Path, default=Path("experiments/day-05"))
     args = parser.parse_args()
 
-    output = Path("experiments/day-05") / f"{args.label}-rag.csv"
+    output = args.output_dir / f"{args.label}-rag.csv"
     dataset = load_dataset()
     rag = RAGService()
     results = []

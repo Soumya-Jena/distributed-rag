@@ -1,11 +1,11 @@
 import argparse
+import csv
 import json
 from pathlib import Path
-
-from sentence_transformers import SentenceTransformer
+from time import perf_counter
 
 from src.chunking import chunk_text
-from src.config import EMBEDDING_MODEL
+from src.config import CHUNK_OVERLAP, CHUNK_SIZE, EMBEDDING_MODEL
 from src.db import (
     get_connection,
     initialize_database,
@@ -14,11 +14,12 @@ from src.document_loader import (
     discover_documents,
     load_document,
 )
+from src.embedding_service import EmbeddingService
 
 
 def ingest_document(
     path: Path,
-    model: SentenceTransformer,
+    embedding_service: EmbeddingService,
 ):
 
     print(f"\nLoading: {path}")
@@ -31,7 +32,7 @@ def ingest_document(
 
     chunks = chunk_text(
         content,
-        model,
+        embedding_service.model,
     )
 
     print(
@@ -43,13 +44,9 @@ def ingest_document(
         for chunk in chunks
     ]
 
-    embeddings = model.encode(
-        texts,
-        batch_size=32,
-        show_progress_bar=True,
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-    )
+    started = perf_counter()
+    embeddings = embedding_service.encode_documents(texts)
+    embedding_seconds = perf_counter() - started
 
     metadata = {
         "extension": path.suffix.lower(),
@@ -145,6 +142,9 @@ def ingest_document(
     print(
         f"Stored {len(chunks)} embeddings."
     )
+    print(f"Embedding time : {embedding_seconds:.3f}s")
+    print(f"Chunks/sec     : {len(texts) / embedding_seconds:.2f}")
+    return len(texts), embedding_seconds
 
 
 def main():
@@ -156,19 +156,13 @@ def main():
         type=Path,
         help="Directory containing documents",
     )
+    parser.add_argument("--metrics-output", type=Path)
 
     args = parser.parse_args()
 
     initialize_database()
 
-    print(
-        f"Loading embedding model: "
-        f"{EMBEDDING_MODEL}"
-    )
-
-    model = SentenceTransformer(
-        EMBEDDING_MODEL
-    )
+    embedding_service = EmbeddingService(EMBEDDING_MODEL)
 
     documents = discover_documents(
         args.directory
@@ -178,12 +172,48 @@ def main():
         f"Found {len(documents)} documents."
     )
 
+    total_chunks = 0
+    total_embedding_seconds = 0.0
     for document in documents:
 
-        ingest_document(
+        chunks, seconds = ingest_document(
             document,
-            model,
+            embedding_service,
         )
+        total_chunks += chunks
+        total_embedding_seconds += seconds
+
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO corpus_config (id, embedding_model, chunk_size, chunk_overlap)
+            VALUES (1, %s, %s, %s)
+            ON CONFLICT (id) DO UPDATE SET
+                embedding_model = EXCLUDED.embedding_model,
+                chunk_size = EXCLUDED.chunk_size,
+                chunk_overlap = EXCLUDED.chunk_overlap,
+                updated_at = NOW();
+            """,
+            (EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP),
+        )
+        conn.commit()
+
+    if args.metrics_output:
+        args.metrics_output.parent.mkdir(parents=True, exist_ok=True)
+        with args.metrics_output.open("w", newline="", encoding="utf-8") as file:
+            writer = csv.DictWriter(
+                file,
+                fieldnames=["embedding_model", "chunks", "embedding_seconds", "chunks_per_second"],
+            )
+            writer.writeheader()
+            writer.writerow(
+                {
+                    "embedding_model": EMBEDDING_MODEL,
+                    "chunks": total_chunks,
+                    "embedding_seconds": total_embedding_seconds,
+                    "chunks_per_second": total_chunks / total_embedding_seconds,
+                }
+            )
 
 
 if __name__ == "__main__":

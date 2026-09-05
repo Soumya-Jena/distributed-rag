@@ -1,12 +1,11 @@
 from dataclasses import dataclass
 
-from sentence_transformers import SentenceTransformer
-
 from src.config import (
     EMBEDDING_MODEL,
     RETRIEVAL_TOP_K,
 )
 from src.db import get_connection
+from src.embedding_service import EmbeddingService
 
 
 @dataclass
@@ -23,14 +22,18 @@ class Retriever:
 
     def __init__(self):
 
-        print(
-            f"Loading embedding model: "
-            f"{EMBEDDING_MODEL}"
-        )
-
-        self.model = SentenceTransformer(
-            EMBEDDING_MODEL
-        )
+        self.embedding_service = EmbeddingService(EMBEDDING_MODEL)
+        with get_connection() as conn:
+            config = conn.execute(
+                "SELECT embedding_model, chunk_size, chunk_overlap FROM corpus_config WHERE id = 1"
+            ).fetchone()
+        if not config:
+            raise RuntimeError("Corpus configuration is missing. Re-ingest the corpus.")
+        if config[0] != EMBEDDING_MODEL:
+            raise RuntimeError(
+                f"Corpus was embedded using {config[0]} but query model is "
+                f"{EMBEDDING_MODEL}. Re-ingest the corpus before querying."
+            )
 
     def search(
         self,
@@ -38,11 +41,7 @@ class Retriever:
         top_k: int = RETRIEVAL_TOP_K,
     ):
 
-        query_embedding = self.model.encode(
-            query,
-            convert_to_numpy=True,
-            normalize_embeddings=True,
-        )
+        query_embedding = self.embedding_service.encode_query(query)
 
         with get_connection() as conn:
 

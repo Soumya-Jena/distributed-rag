@@ -1,0 +1,17 @@
+id,question,hit@1,hit@3,hit@5,recall@5,reciprocal_rank,correct_source_rank,top_1_source,top_1_chunk_index,top_1_similarity,retrieval_seconds
+q001,How does PostgreSQL streaming replication transfer changes to a standby?,1,1,1,1.0,1.0,1,postgres-replication.md,0,0.8038901090621948,0.015837799990549684
+q002,What role does MVCC play in PostgreSQL transaction visibility?,1,1,1,1.0,1.0,1,postgres-mvcc.md,3,0.6871026754379272,0.014481600024737418
+q003,How does Kubernetes select a node for a Pod?,1,1,1,1.0,1.0,1,kubernetes-scheduling.md,0,0.6597036719322205,0.012520799995400012
+q004,What is Kafka primarily used for?,1,1,1,1.0,1.0,1,kafka-overview.md,0,0.6000415682792664,0.013657699921168387
+q007,What durability and latency trade-off does synchronous PostgreSQL replication make?,1,1,1,1.0,1.0,1,postgres-replication.md,1,0.5930626392364502,0.017206899938173592
+q008,Why can an inactive replication slot consume disk space on a PostgreSQL primary?,1,1,1,1.0,1.0,1,postgres-replication.md,3,0.638943612575531,0.01614530000369996
+q009,How does logical replication differ from physical streaming replication?,1,1,1,1.0,1.0,1,postgres-replication.md,4,0.6043543815612793,0.01652119995560497
+q010,How do PostgreSQL snapshots determine which row versions a transaction can see?,1,1,1,1.0,1.0,1,postgres-mvcc.md,0,0.6545888781547546,0.016261599957942963
+q011,Why can PostgreSQL readers and writers usually proceed without blocking each other?,1,1,1,1.0,1.0,1,postgres-mvcc.md,1,0.4903690814971924,0.01429449999704957
+q012,Why are VACUUM and autovacuum important for obsolete row versions?,1,1,1,1.0,1.0,1,postgres-mvcc.md,2,0.6280557513237,0.013349100016057491
+q013,What is the difference between Kubernetes resource requests and limits during scheduling?,1,1,1,1.0,1.0,1,kubernetes-scheduling.md,0,0.656318187713623,0.013715400011278689
+q014,"How do taints, tolerations, and node affinity affect Pod placement?",1,1,1,1.0,1.0,1,kubernetes-scheduling.md,2,0.7579872608184814,0.01268089993391186
+q015,What happens after the Kubernetes scheduler binds a Pod to a node?,1,1,1,1.0,1.0,1,kubernetes-scheduling.md,0,0.7807964086532593,0.012496699928306043
+q016,How do Kafka partitions provide ordering and parallelism?,1,1,1,1.0,1.0,1,kafka-overview.md,1,0.6874333024024963,0.012413300108164549
+q017,How do Kafka consumer groups divide partition work?,1,1,1,1.0,1.0,1,kafka-overview.md,1,0.7492613792419434,0.014347500051371753
+q018,How does Kafka retain and replay events?,1,1,1,1.0,1.0,1,kafka-overview.md,2,0.7000126838684082,0.013845299952663481

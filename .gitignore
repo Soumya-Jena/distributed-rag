@@ -7,3 +7,5 @@ __pycache__/
 experiments/*
 !experiments/day-05/
 !experiments/day-05/**
+!experiments/day-06/
+!experiments/day-06/**

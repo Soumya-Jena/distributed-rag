@@ -28,3 +28,11 @@ CREATE TABLE IF NOT EXISTS chunks (
 
     UNIQUE(document_id, chunk_index)
 );
+
+CREATE TABLE IF NOT EXISTS corpus_config (
+    id SMALLINT PRIMARY KEY CHECK (id = 1),
+    embedding_model TEXT NOT NULL,
+    chunk_size INTEGER NOT NULL,
+    chunk_overlap INTEGER NOT NULL,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

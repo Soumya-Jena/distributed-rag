@@ -1,0 +1,3 @@
+label,answer_correctness,groundedness,citation_support,unsupported_refusal,avg_prompt_tokens,generation_p95_seconds
+embedding-minilm,0.75,0.75,0.0,1.0,774.75,129.7523626350274
+embedding-e5-small-v2,0.75,0.75,0.0,0.5,858.75,142.81674715502302

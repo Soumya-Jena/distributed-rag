@@ -4,3 +4,17 @@
 {"id":"q004","question":"What is Kafka primarily used for?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["event","stream"]}
 {"id":"q005","question":"What is the capital of Japan?","answerable":false,"relevant_sources":[],"expected_keywords":[]}
 {"id":"q006","question":"Who won the 2022 FIFA World Cup?","answerable":false,"relevant_sources":[],"expected_keywords":[]}
+{"id":"q007","question":"What durability and latency trade-off does synchronous PostgreSQL replication make?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["acknowledge","durability","latency"]}
+{"id":"q008","question":"Why can an inactive replication slot consume disk space on a PostgreSQL primary?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["WAL","retained","disk"]}
+{"id":"q009","question":"How does logical replication differ from physical streaming replication?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["row-level","tables","cluster"]}
+{"id":"q010","question":"How do PostgreSQL snapshots determine which row versions a transaction can see?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["snapshot","visible","row versions"]}
+{"id":"q011","question":"Why can PostgreSQL readers and writers usually proceed without blocking each other?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["MVCC","row versions"]}
+{"id":"q012","question":"Why are VACUUM and autovacuum important for obsolete row versions?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["reusable","bloat","wraparound"]}
+{"id":"q013","question":"What is the difference between Kubernetes resource requests and limits during scheduling?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["requests","reserves","limits"]}
+{"id":"q014","question":"How do taints, tolerations, and node affinity affect Pod placement?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["repel","permit","labels"]}
+{"id":"q015","question":"What happens after the Kubernetes scheduler binds a Pod to a node?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["kubelet","runtime","containers"]}
+{"id":"q016","question":"How do Kafka partitions provide ordering and parallelism?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["order","offsets","parallel"]}
+{"id":"q017","question":"How do Kafka consumer groups divide partition work?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["partition","consumer","group"]}
+{"id":"q018","question":"How does Kafka retain and replay events?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["retains","offsets","replay"]}
+{"id":"q019","question":"What is the boiling point of water on Mount Everest?","answerable":false,"relevant_sources":[],"expected_keywords":[]}
+{"id":"q020","question":"Who wrote Pride and Prejudice?","answerable":false,"relevant_sources":[],"expected_keywords":[]}

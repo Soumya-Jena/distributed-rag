@@ -46,9 +46,10 @@ def percentile(values, percentile_value):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, type=valid_label)
+    parser.add_argument("--output-dir", type=Path, default=Path("experiments/day-05"))
     args = parser.parse_args()
 
-    output = Path("experiments/day-05") / f"{args.label}-retrieval.csv"
+    output = args.output_dir / f"{args.label}-retrieval.csv"
     dataset = load_dataset()
     retriever = Retriever()
     results = []
@@ -94,6 +95,7 @@ def main():
     print(f"Recall@5      : {mean(r['recall@5'] for r in results):.3f}")
     print(f"MRR           : {mean(r['reciprocal_rank'] for r in results):.3f}")
     print(f"Retrieval avg : {mean(latencies):.6f}s")
+    print(f"Retrieval P50 : {percentile(latencies, 0.50):.6f}s")
     print(f"Retrieval P95 : {percentile(latencies, 0.95):.6f}s")
     print(f"\nSaved to: {output}")
 

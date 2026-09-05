@@ -1,0 +1,4 @@
+label,embedding_model,hit_at_1,hit_at_3,hit_at_5,recall_at_5,mrr,retrieval_p50_seconds,retrieval_p95_seconds,chunks_per_second
+embedding-minilm,sentence-transformers/all-MiniLM-L6-v2,1,1,1,1.0,1.0,0.014069899974856526,0.016692624951247126,62.11795174870727
+embedding-bge-small,BAAI/bge-small-en-v1.5,1,1,1,1.0,1.0,0.02692410006420687,0.02915734998532571,32.060711670957524
+embedding-e5-small-v2,intfloat/e5-small-v2,1,1,1,1.0,1.0,0.025561599934007972,0.028387575031956658,32.806290625618374

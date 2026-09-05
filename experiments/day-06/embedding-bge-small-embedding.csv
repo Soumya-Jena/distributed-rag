@@ -1,0 +1,2 @@
+embedding_model,chunks,embedding_seconds,chunks_per_second
+BAAI/bge-small-en-v1.5,17,0.5302440000232309,32.060711670957524

@@ -1,0 +1,2 @@
+embedding_model,chunks,embedding_seconds,chunks_per_second
+intfloat/e5-small-v2,17,0.5181932999985293,32.806290625618374
