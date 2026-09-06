@@ -5,6 +5,7 @@ from src.generator import LocalGenerator
 
 from src.config import (
     MIN_RETRIEVAL_SIMILARITY,
+    USE_RERANKER,
 )
 
 from src.prompt import (
@@ -12,10 +13,8 @@ from src.prompt import (
     build_user_prompt,
 )
 
-from src.retriever import (
-    RetrievedChunk,
-    Retriever,
-)
+from src.retriever import RetrievedChunk
+from src.retrieval_pipeline import RetrievalPipeline
 
 
 @dataclass
@@ -29,6 +28,10 @@ class RAGResult:
 
     retrieval_seconds: float
 
+    vector_seconds: float
+
+    rerank_seconds: float
+
     generation_seconds: float
 
     prompt_tokens: int
@@ -36,13 +39,15 @@ class RAGResult:
 
 class RAGService:
 
-    def __init__(self):
+    def __init__(self, use_reranker=None, retrieval_pipeline=None):
 
         print(
             "Initializing RAG service..."
         )
 
-        self.retriever = Retriever()
+        self.retrieval_pipeline = retrieval_pipeline or RetrievalPipeline(
+            use_reranker=USE_RERANKER if use_reranker is None else use_reranker
+        )
 
         self.generator = LocalGenerator()
 
@@ -57,12 +62,12 @@ class RAGService:
         # Retrieval
         # -------------------------
 
-        start = perf_counter()
-
-        chunks = self.retriever.search(
+        retrieval_result = self.retrieval_pipeline.retrieve(
             question,
-            top_k,
+            final_k=top_k,
         )
+
+        chunks = retrieval_result.final_chunks
 
         chunks = [
             chunk
@@ -72,8 +77,7 @@ class RAGService:
         ]
 
         retrieval_seconds = (
-            perf_counter()
-            - start
+            retrieval_result.vector_seconds + retrieval_result.rerank_seconds
         )
 
         if not chunks:
@@ -90,6 +94,8 @@ class RAGService:
                 retrieval_seconds=(
                     retrieval_seconds
                 ),
+                vector_seconds=retrieval_result.vector_seconds,
+                rerank_seconds=retrieval_result.rerank_seconds,
                 generation_seconds=0.0,
                 prompt_tokens=0,
             )
@@ -136,6 +142,8 @@ class RAGService:
             retrieval_seconds=(
                 retrieval_seconds
             ),
+            vector_seconds=retrieval_result.vector_seconds,
+            rerank_seconds=retrieval_result.rerank_seconds,
             generation_seconds=(
                 generation_seconds
             ),

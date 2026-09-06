@@ -60,3 +60,17 @@ MAX_NEW_TOKENS = int(
         "350",
     )
 )
+
+RERANK_MODEL = os.getenv(
+    "RERANK_MODEL",
+    "cross-encoder/ms-marco-MiniLM-L6-v2",
+)
+
+RETRIEVAL_CANDIDATE_K = int(os.getenv("RETRIEVAL_CANDIDATE_K", "20"))
+RERANK_TOP_K = int(os.getenv("RERANK_TOP_K", "5"))
+
+USE_RERANKER = os.getenv("USE_RERANKER", "false").lower() in {
+    "1",
+    "true",
+    "yes",
+}

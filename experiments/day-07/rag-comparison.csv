@@ -1,0 +1,3 @@
+architecture,correctness,groundedness,citation_support,unsupported_refusal,retrieval_p95_seconds,generation_p95_seconds,end_to_end_p95_seconds
+vector,0.75,0.75,0.0,1.0,0.020741025015013292,129.7523626350274,129.76941078509554
+vector-plus-reranker,0.75,0.75,0.0,1.0,0.3289897000940982,91.18689828501083,91.5004435051349

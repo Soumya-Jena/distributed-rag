@@ -35,11 +35,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, type=valid_label)
     parser.add_argument("--output-dir", type=Path, default=Path("experiments/day-05"))
+    reranker_group = parser.add_mutually_exclusive_group()
+    reranker_group.add_argument("--reranker", dest="use_reranker", action="store_true")
+    reranker_group.add_argument("--no-reranker", dest="use_reranker", action="store_false")
+    parser.set_defaults(use_reranker=None)
     args = parser.parse_args()
 
     output = args.output_dir / f"{args.label}-rag.csv"
     dataset = load_dataset()
-    rag = RAGService()
+    rag = RAGService(use_reranker=args.use_reranker)
     results = []
 
     for record in dataset:
@@ -62,6 +66,8 @@ def main():
                 "retrieved_count": len(result.chunks),
                 "prompt_tokens": result.prompt_tokens,
                 "retrieval_seconds": result.retrieval_seconds,
+                "vector_seconds": result.vector_seconds,
+                "rerank_seconds": result.rerank_seconds,
                 "generation_seconds": result.generation_seconds,
                 "manual_correctness": "",
                 "manual_groundedness": "",
