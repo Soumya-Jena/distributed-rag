@@ -29,6 +29,7 @@ class RetrievalPipelineTests(unittest.TestCase):
     def test_vector_only_preserves_candidate_order(self):
         result = RetrievalPipeline(
             use_reranker=False,
+            retrieval_mode="vector",
             retriever=StubRetriever(),
         ).retrieve("query", candidate_k=3, final_k=2)
 
@@ -38,6 +39,7 @@ class RetrievalPipelineTests(unittest.TestCase):
     def test_reranker_can_change_final_order(self):
         result = RetrievalPipeline(
             use_reranker=True,
+            retrieval_mode="vector",
             retriever=StubRetriever(),
             reranker=ReverseReranker(),
         ).retrieve("query", candidate_k=3, final_k=2)

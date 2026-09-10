@@ -36,3 +36,13 @@ CREATE TABLE IF NOT EXISTS corpus_config (
     chunk_overlap INTEGER NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE chunks
+ADD COLUMN IF NOT EXISTS search_vector TSVECTOR
+GENERATED ALWAYS AS (
+    to_tsvector('simple', COALESCE(content, ''))
+) STORED;
+
+CREATE INDEX IF NOT EXISTS idx_chunks_search_vector
+ON chunks
+USING GIN (search_vector);

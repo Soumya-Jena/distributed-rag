@@ -26,14 +26,14 @@ GENERATION_MODEL = os.getenv(
 CHUNK_SIZE = int(
     os.getenv(
         "CHUNK_SIZE",
-        "200",
+        "100",
     )
 )
 
 CHUNK_OVERLAP = int(
     os.getenv(
         "CHUNK_OVERLAP",
-        "40",
+        "20",
     )
 )
 
@@ -74,3 +74,8 @@ USE_RERANKER = os.getenv("USE_RERANKER", "false").lower() in {
     "true",
     "yes",
 }
+
+RETRIEVAL_MODE = os.getenv("RETRIEVAL_MODE", "hybrid").lower()
+LEXICAL_CANDIDATE_K = int(os.getenv("LEXICAL_CANDIDATE_K", "20"))
+HYBRID_CANDIDATE_K = int(os.getenv("HYBRID_CANDIDATE_K", "20"))
+RRF_K = int(os.getenv("RRF_K", "60"))

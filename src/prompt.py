@@ -46,13 +46,26 @@ def build_user_prompt(
         start=1,
     ):
 
+        score_lines = []
+        similarity = getattr(chunk, "similarity", None)
+        if similarity is None:
+            similarity = getattr(chunk, "vector_similarity", None)
+        if similarity is not None:
+            score_lines.append(f"Vector similarity: {similarity:.4f}")
+        lexical_score = getattr(chunk, "lexical_score", None)
+        if lexical_score is not None:
+            score_lines.append(f"Lexical score: {lexical_score:.4f}")
+        rrf_score = getattr(chunk, "rrf_score", None)
+        if rrf_score is not None:
+            score_lines.append(f"RRF score: {rrf_score:.6f}")
+
         source = f"""
 [S{index}]
 
 Title: {chunk.title}
 Source: {chunk.source_path}
 Chunk: {chunk.chunk_index}
-Similarity: {chunk.similarity:.4f}
+{chr(10).join(score_lines)}
 
 Excerpt:
 {chunk.content}

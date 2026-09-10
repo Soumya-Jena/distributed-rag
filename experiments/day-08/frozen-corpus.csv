@@ -1,0 +1,2 @@
+embedding_model,chunks,embedding_seconds,chunks_per_second
+sentence-transformers/all-MiniLM-L6-v2,17,0.5794608999276534,29.337613637300596

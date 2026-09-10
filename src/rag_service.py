@@ -5,6 +5,7 @@ from src.generator import LocalGenerator
 
 from src.config import (
     MIN_RETRIEVAL_SIMILARITY,
+    RETRIEVAL_MODE,
     USE_RERANKER,
 )
 
@@ -24,13 +25,17 @@ class RAGResult:
 
     answer: str
 
-    chunks: list[RetrievedChunk]
+    chunks: list
 
     retrieval_seconds: float
 
     vector_seconds: float
 
     rerank_seconds: float
+
+    lexical_seconds: float
+
+    fusion_seconds: float
 
     generation_seconds: float
 
@@ -39,17 +44,24 @@ class RAGResult:
 
 class RAGService:
 
-    def __init__(self, use_reranker=None, retrieval_pipeline=None):
+    def __init__(
+        self,
+        use_reranker=None,
+        retrieval_mode=RETRIEVAL_MODE,
+        retrieval_pipeline=None,
+        generator=None,
+    ):
 
         print(
             "Initializing RAG service..."
         )
 
         self.retrieval_pipeline = retrieval_pipeline or RetrievalPipeline(
-            use_reranker=USE_RERANKER if use_reranker is None else use_reranker
+            use_reranker=USE_RERANKER if use_reranker is None else use_reranker,
+            retrieval_mode=retrieval_mode,
         )
 
-        self.generator = LocalGenerator()
+        self.generator = generator or LocalGenerator()
 
 
     def answer(
@@ -69,15 +81,11 @@ class RAGService:
 
         chunks = retrieval_result.final_chunks
 
-        chunks = [
-            chunk
-            for chunk in chunks
-            if chunk.similarity
-            >= MIN_RETRIEVAL_SIMILARITY
-        ]
+        chunks = [chunk for chunk in chunks if self._passes_threshold(chunk)]
 
         retrieval_seconds = (
             retrieval_result.vector_seconds + retrieval_result.rerank_seconds
+            + retrieval_result.lexical_seconds + retrieval_result.fusion_seconds
         )
 
         if not chunks:
@@ -96,6 +104,8 @@ class RAGService:
                 ),
                 vector_seconds=retrieval_result.vector_seconds,
                 rerank_seconds=retrieval_result.rerank_seconds,
+                lexical_seconds=retrieval_result.lexical_seconds,
+                fusion_seconds=retrieval_result.fusion_seconds,
                 generation_seconds=0.0,
                 prompt_tokens=0,
             )
@@ -144,10 +154,20 @@ class RAGService:
             ),
             vector_seconds=retrieval_result.vector_seconds,
             rerank_seconds=retrieval_result.rerank_seconds,
+            lexical_seconds=retrieval_result.lexical_seconds,
+            fusion_seconds=retrieval_result.fusion_seconds,
             generation_seconds=(
                 generation_seconds
             ),
             prompt_tokens=(
                 self.generator.last_input_token_count
             ),
+        )
+
+    @staticmethod
+    def _passes_threshold(chunk):
+        lexical_score = getattr(chunk, "lexical_score", None)
+        similarity = getattr(chunk, "similarity", None)
+        return lexical_score is not None or (
+            similarity is not None and similarity >= MIN_RETRIEVAL_SIMILARITY
         )

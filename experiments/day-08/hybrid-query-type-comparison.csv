@@ -1,0 +1,4 @@
+query_type,questions,vector_hit_at_1,lexical_hit_at_20,union_candidate_hit,rrf_hit_at_1,rrf_hit_at_5,rrf_mrr,hybrid_reranked_hit_at_1,hybrid_reranked_mrr
+lexical,15,0.8,1,1,1,1,1.0,1,1.0
+mixed,15,0.9333333333333333,1,1,1,1,1.0,1,1.0
+semantic,20,1,0,1,1,1,1.0,1,1.0

@@ -28,13 +28,23 @@ def main():
         "--no-reranker",
         dest="use_reranker",
         action="store_false",
-        help="Use vector retrieval without cross-encoder reranking",
+        help="Disable cross-encoder reranking",
     )
     parser.set_defaults(use_reranker=None)
 
+    parser.add_argument(
+        "--retrieval-mode",
+        choices=["vector", "hybrid"],
+        default=None,
+        help="Choose dense vector retrieval or hybrid vector + lexical retrieval",
+    )
+
     args = parser.parse_args()
 
-    rag = RAGService(use_reranker=args.use_reranker)
+    rag_options = {"use_reranker": args.use_reranker}
+    if args.retrieval_mode is not None:
+        rag_options["retrieval_mode"] = args.retrieval_mode
+    rag = RAGService(**rag_options)
 
     result = rag.answer(
         args.question,
@@ -54,12 +64,22 @@ def main():
         start=1,
     ):
 
+        score_parts = []
+        similarity = getattr(chunk, "similarity", None)
+        if similarity is not None:
+            score_parts.append(f"vector={similarity:.4f}")
+        lexical_score = getattr(chunk, "lexical_score", None)
+        if lexical_score is not None:
+            score_parts.append(f"lexical={lexical_score:.4f}")
+        rrf_score = getattr(chunk, "rrf_score", None)
+        if rrf_score is not None:
+            score_parts.append(f"rrf={rrf_score:.6f}")
+
         print(
             f"[S{index}] "
             f"{chunk.title} | "
             f"chunk={chunk.chunk_index} | "
-            f"similarity="
-            f"{chunk.similarity:.4f}"
+            f"{' | '.join(score_parts)}"
         )
 
     print("\nPERFORMANCE")
@@ -68,6 +88,16 @@ def main():
     print(
         f"Vector     : "
         f"{result.vector_seconds:.3f}s"
+    )
+
+    print(
+        f"Lexical    : "
+        f"{result.lexical_seconds:.3f}s"
+    )
+
+    print(
+        f"Fusion     : "
+        f"{result.fusion_seconds:.3f}s"
     )
 
     print(

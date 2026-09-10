@@ -1,0 +1,54 @@
+{"id":"q101","question":"How are database changes conveyed from a PostgreSQL primary to its backup server?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q102","question":"Why might the newest committed transactions disappear after a primary database failure?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q103","question":"What availability step turns a recovery server into a writable database?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q104","question":"Why can a disconnected replication consumer fill the primary's disk?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q105","question":"How does table-level change publishing differ from copying a whole database cluster?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q106","question":"How can database readers observe older data while another transaction updates it?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q107","question":"Why do reads and writes usually proceed concurrently in PostgreSQL?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q108","question":"How does transaction isolation change when a fresh visibility view is acquired?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q109","question":"What background maintenance prevents obsolete tuples from accumulating indefinitely?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q110","question":"Why is row visibility control different from sending changes to another server?","query_type":"semantic","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q111","question":"What process decides which worker machine receives a newly created workload?","query_type":"semantic","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q112","question":"Why might a cluster machine be rejected before workload placement scores are calculated?","query_type":"semantic","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q113","question":"How are feasible Kubernetes machines ranked for placement?","query_type":"semantic","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q114","question":"Which component starts containers after placement has been recorded?","query_type":"semantic","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q115","question":"How can a workload prefer labeled machines or avoid unsuitable ones?","query_type":"semantic","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q116","question":"What platform lets producers and consumers exchange persistent ordered event streams?","query_type":"semantic","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q117","question":"How can multiple consumers split work while preserving order within each shard?","query_type":"semantic","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q118","question":"What lets an application reread older events it processed previously?","query_type":"semantic","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q119","question":"How does an event-log cluster continue serving a shard after its active broker fails?","query_type":"semantic","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q120","question":"Why can separate applications independently consume the same event history?","query_type":"semantic","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q121","question":"WAL","query_type":"lexical","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q122","question":"MVCC","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q123","question":"Read Committed","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q124","question":"Repeatable Read","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q125","question":"VACUUM","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q126","question":"autovacuum","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q127","question":"transaction ID wraparound","query_type":"lexical","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q128","question":"node affinity","query_type":"lexical","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q129","question":"Pod affinity","query_type":"lexical","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q130","question":"kubelet","query_type":"lexical","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q131","question":"Kafka consumer group","query_type":"lexical","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q132","question":"replication factor","query_type":"lexical","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q133","question":"sequential offsets","query_type":"lexical","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q134","question":"logical replication","query_type":"lexical","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q135","question":"streaming replication","query_type":"lexical","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q136","question":"WAL standby","query_type":"mixed","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q137","question":"synchronous replication durability latency","query_type":"mixed","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q138","question":"replication slots retained WAL","query_type":"mixed","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q139","question":"logical replication selected tables","query_type":"mixed","answerable":true,"relevant_sources":["postgres-replication.md"]}
+{"id":"q140","question":"MVCC snapshot row versions","query_type":"mixed","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q141","question":"Read Committed new snapshot","query_type":"mixed","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q142","question":"VACUUM table bloat","query_type":"mixed","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q143","question":"CPU memory requests scheduler","query_type":"mixed","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q144","question":"taints tolerations node affinity","query_type":"mixed","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q145","question":"kubelet container runtime","query_type":"mixed","answerable":true,"relevant_sources":["kubernetes-scheduling.md"]}
+{"id":"q146","question":"Kafka partition sequential offsets","query_type":"mixed","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q147","question":"consumer group partition workload","query_type":"mixed","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q148","question":"replication factor follower leader","query_type":"mixed","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q149","question":"retains events replay offsets","query_type":"mixed","answerable":true,"relevant_sources":["kafka-overview.md"]}
+{"id":"q150","question":"PostgreSQL MVCC replication mechanism","query_type":"mixed","answerable":true,"relevant_sources":["postgres-mvcc.md"]}
+{"id":"q151","question":"SQLSTATE 23505","query_type":"unsupported","answerable":false,"relevant_sources":[]}
+{"id":"q152","question":"log_min_duration_statement","query_type":"unsupported","answerable":false,"relevant_sources":[]}
+{"id":"q153","question":"hot_standby_feedback","query_type":"unsupported","answerable":false,"relevant_sources":[]}
+{"id":"q154","question":"xCluster","query_type":"unsupported","answerable":false,"relevant_sources":[]}

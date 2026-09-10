@@ -4,12 +4,11 @@ import torch
 from sentence_transformers import CrossEncoder
 
 from src.config import RERANK_MODEL
-from src.retriever import RetrievedChunk
 
 
 @dataclass
 class RerankedChunk:
-    chunk: RetrievedChunk
+    chunk: object
     original_rank: int
     rerank_score: float
 
@@ -20,7 +19,7 @@ class Reranker:
         print(f"Loading reranker: {model_name}")
         self.model = CrossEncoder(model_name, activation_fn=torch.nn.Sigmoid())
 
-    def rerank(self, query: str, chunks: list[RetrievedChunk], top_k: int = 5):
+    def rerank(self, query: str, chunks: list, top_k: int = 5):
         if not chunks:
             return []
         pairs = [(query, chunk.content) for chunk in chunks]
