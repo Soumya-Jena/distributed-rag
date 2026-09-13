@@ -32,8 +32,22 @@ The default retrieval path combines dense MiniLM embeddings with PostgreSQL full
 ```powershell
 python -m src.rag "How does PostgreSQL streaming replication work?"
 python -m src.rag "What is MVCC?" --retrieval-mode hybrid --reranker
+python -m src.rag "What is MVCC?" --grounding-mode strict
 python -m evaluation.inspect_hybrid
 python -m evaluation.evaluate_hybrid --label hybrid
 ```
 
 Configuration lives in `.env`; copy `.env.example` when setting up a new environment.
+
+## Grounding evaluation
+
+The selected strict evidence contract requires `SUPPORTED`, `PARTIAL`, or `INSUFFICIENT` status, forbids filling gaps from model memory, and requests claim-level citations. The baseline prompt remains available for reproducible A/B evaluation.
+
+```powershell
+python -m evaluation.evaluate_grounding --mode baseline --label baseline-grounding --batch-size 4 --max-new-tokens 32
+python -m evaluation.evaluate_grounding --mode strict --label strict-grounding --batch-size 4 --max-new-tokens 32
+python -m evaluation.score_grounding
+python -m evaluation.plot_grounding_results
+```
+
+See `experiments/day-09/report.md` for the claim-level review and limitations.

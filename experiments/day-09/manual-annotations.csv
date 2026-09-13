@@ -1,0 +1,71 @@
+prompt_mode,id,total_claims,supported_claims,partially_supported_claims,unsupported_claims,claims_with_citations,citations_that_support_claim,manual_correctness,manual_groundedness,manual_partial_handling,notes
+baseline,g001,1,1,0,0,0,0,0,1,,Supported but truncated before explaining WAL transfer.
+baseline,g002,1,0,1,0,0,0,0,0,,Overclaims that MVCC removes conflicts; answer truncated.
+baseline,g003,1,1,0,0,0,0,0,1,,Supported criteria but omits filtering and scoring behavior.
+baseline,g004,1,1,0,0,0,0,1,1,,Primary use is answered correctly; no citation.
+baseline,g005,1,1,0,0,0,0,0,1,,Acknowledgement behavior is supported but the trade-off explanation is truncated.
+baseline,g006,1,1,0,0,0,0,1,1,,Correctly connects retained WAL to disk use; no citation.
+baseline,g007,1,1,0,0,0,0,1,1,,Correct row-level versus physical distinction; sentence truncated.
+baseline,g008,1,0,1,0,0,0,0,0,,Generic isolation claim does not complete the requested snapshot comparison.
+baseline,g009,1,1,0,0,0,0,1,1,,Correctly attributes reduced blocking to MVCC.
+baseline,g010,1,1,0,0,0,0,1,1,,Correctly explains obsolete-row retention; output truncated.
+baseline,g011,1,0,1,0,0,0,0,0,,Describes requests as a minimum rather than reserved scheduling capacity; limits omitted.
+baseline,g012,1,1,0,0,0,0,0,1,,Vague supported statement; requested mechanisms are not explained.
+baseline,g013,1,1,0,0,0,0,1,1,,Complete and supported kubelet/container-runtime answer.
+baseline,g014,2,1,1,0,0,0,0,0,,Conflates ordering and parallelism with replication and consumer-group assignment.
+baseline,g015,2,1,1,0,0,0,1,0,,Core one-consumer-per-partition claim is correct; group independence wording is conflated.
+baseline,g016,1,1,0,0,0,0,0,1,0,Explains replication but does not acknowledge the missing introduction version.
+baseline,g017,1,0,1,0,0,0,0,0,0,Trade-off wording is imprecise and missing timeout is not handled.
+baseline,g018,1,1,0,0,0,0,0,1,0,Explains slots but does not acknowledge the absent retention maximum.
+baseline,g019,1,1,0,0,0,0,0,1,0,Explains logical replication but omits the unsupported minimum versions.
+baseline,g020,1,0,1,0,0,0,0,0,0,Overgeneralizes snapshot scope and never handles memory size.
+baseline,g021,1,1,0,0,0,0,0,1,0,Explains VACUUM but not the missing autovacuum interval.
+baseline,g022,1,1,0,0,0,0,0,1,0,Explains filtering but not the absent scoring weights.
+baseline,g023,2,2,0,0,0,0,0,1,0,Supported scheduling description but missing CPU default is not handled.
+baseline,g024,2,2,0,0,0,0,0,1,0,Supported partition description but missing maximum is not handled.
+baseline,g025,2,2,0,0,0,0,0,1,0,Supported group behavior but missing rebalance timeout is not handled.
+baseline,g026,1,0,0,1,0,0,0,0,,Invents a maximum database-size value.
+baseline,g027,1,0,0,1,0,0,0,0,,Falsely presents physical streaming replication as a zero-RPO parameter.
+baseline,g028,2,0,1,1,0,0,0,0,,Invents PostgreSQL 9.0 and adds unsupported operational detail.
+baseline,g029,1,0,0,1,0,0,0,0,,Invents an incorrect foreign-key meaning for SQLSTATE 23505.
+baseline,g030,0,0,0,0,0,0,1,1,,Correct retrieval-level refusal.
+baseline,g031,2,0,1,1,0,0,0,0,,Invents an xCluster conflict-resolution mechanism from unrelated slot evidence.
+baseline,g032,0,0,0,0,0,0,1,1,,Correct retrieval-level refusal.
+baseline,g033,0,0,0,0,0,0,1,1,,Correct retrieval-level refusal.
+baseline,g034,1,1,0,0,0,0,1,1,,Correctly rejects the unsupported production-causality inference.
+baseline,g035,1,0,0,1,0,0,0,0,,Accepts the false premise that synchronous replication is required for MVCC.
+strict,g001,1,1,0,0,0,0,0,1,,Supported but truncated; required status and citation are missing.
+strict,g002,1,0,1,0,0,0,0,0,,Overclaims conflict-free concurrency; required status and citation are missing.
+strict,g003,1,1,0,0,0,0,0,1,,Supported criteria but incomplete; required status and citation are missing.
+strict,g004,1,1,0,0,0,0,1,1,,Correct status and answer but no citation.
+strict,g005,1,1,0,0,0,0,0,1,,Supported acknowledgement behavior but incomplete and uncited.
+strict,g006,1,1,0,0,0,0,1,1,,Correct slot explanation but required status and citation are missing.
+strict,g007,1,1,0,0,0,0,1,1,,Correct distinction but required status and citation are missing.
+strict,g008,1,1,0,0,0,0,0,1,,Begins the correct difference but truncates Repeatable Read behavior.
+strict,g009,1,1,0,0,0,0,1,1,,Correct status and supported MVCC claim but no citation.
+strict,g010,1,1,0,0,0,0,0,1,,Supported but too incomplete to answer why maintenance matters.
+strict,g011,1,0,1,0,0,0,0,0,,Imprecise request description; limits omitted.
+strict,g012,2,2,0,0,0,0,0,1,,Supported taint statements but incomplete overall answer.
+strict,g013,1,1,0,0,0,0,1,1,,Complete supported answer but required status and citation are missing.
+strict,g014,1,1,0,0,0,0,0,1,,Supported replication detail does not explain ordering and parallelism.
+strict,g015,1,1,0,0,0,0,1,1,,Core consumer-group behavior is correct but uncited.
+strict,g016,1,1,0,0,0,0,0,1,0,Explains replication but does not declare PARTIAL or handle the missing version.
+strict,g017,1,1,0,0,0,0,0,1,0,Explains the trade-off but does not handle the missing timeout.
+strict,g018,1,1,0,0,0,0,0,1,0,Explains slots but does not handle the absent retention maximum.
+strict,g019,1,1,0,0,0,0,0,1,0,Explains logical replication but omits the missing versions.
+strict,g020,1,1,0,0,0,0,0,1,0,Starts a supported snapshot comparison but omits memory size.
+strict,g021,1,1,0,0,0,0,0,1,0,Explains VACUUM but not the absent autovacuum interval.
+strict,g022,1,1,0,0,0,0,0,1,0,Explains scheduler filtering but not missing scoring weights.
+strict,g023,2,2,0,0,0,0,0,1,0,Supported scheduling description but no missing-default acknowledgement.
+strict,g024,2,2,0,0,0,0,0,1,0,Supported partition description but no missing-maximum acknowledgement.
+strict,g025,1,1,0,0,0,0,1,1,1,Answers supported group behavior and explicitly says the timeout is not supplied.
+strict,g026,2,2,0,0,0,0,1,1,,Correctly says maximum size is absent but labels the evidence SUPPORTED.
+strict,g027,1,0,0,1,0,0,0,0,,Wrongly labels and asserts a physical-replication zero-RPO guarantee.
+strict,g028,1,1,0,0,0,0,1,1,,Correctly says the introduction version is not supplied; required status is missing.
+strict,g029,1,0,0,1,0,0,0,0,,Wrongly labels and invents an incorrect SQLSTATE meaning.
+strict,g030,0,0,0,0,0,0,1,1,,Correct explicit retrieval-level refusal.
+strict,g031,2,0,1,1,0,0,0,0,,Invents xCluster behavior from unrelated PostgreSQL slot evidence.
+strict,g032,0,0,0,0,0,0,1,1,,Correct explicit retrieval-level refusal.
+strict,g033,0,0,0,0,0,0,1,1,,Correct explicit retrieval-level refusal.
+strict,g034,1,0,0,1,0,0,0,0,,Wrongly labels and infers that obsolete rows may cause the CPU spike.
+strict,g035,1,0,0,1,0,0,0,0,,Wrongly labels and accepts the false MVCC/replication premise.

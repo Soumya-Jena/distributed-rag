@@ -1,0 +1,3 @@
+prompt_mode,questions,total_claims,supported_claims,partially_supported_claims,unsupported_claims,faithfulness,unsupported_claim_rate,explicit_status_rate,explicit_status_accuracy,correct_refusal_rate,over_refusal_rate,partial_handling_accuracy,citation_coverage,citation_support,invalid_citations,answer_correctness,answer_groundedness,mean_generation_seconds
+baseline,35,39,24,9,6,0.6153846153846154,0.15384615384615385,0,0,0.3,0,0,0.0,0.0,0,0.3142857142857143,0.6285714285714286,105.37376951714312
+strict,35,37,29,3,5,0.7837837837837838,0.13513513513513514,0.2857142857142857,0.14285714285714285,0.3,0,0.1,0.0,0.0,0,0.34285714285714286,0.8,111.44239513427685

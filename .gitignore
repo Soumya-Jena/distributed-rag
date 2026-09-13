@@ -13,3 +13,5 @@ experiments/*
 !experiments/day-07/**
 !experiments/day-08/
 !experiments/day-08/**
+!experiments/day-09/
+!experiments/day-09/**

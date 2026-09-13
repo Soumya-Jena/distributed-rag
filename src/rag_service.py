@@ -4,14 +4,15 @@ from time import perf_counter
 from src.generator import LocalGenerator
 
 from src.config import (
+    GROUNDING_MODE,
     MIN_RETRIEVAL_SIMILARITY,
     RETRIEVAL_MODE,
     USE_RERANKER,
 )
 
 from src.prompt import (
-    SYSTEM_PROMPT,
     build_user_prompt,
+    get_system_prompt,
 )
 
 from src.retriever import RetrievedChunk
@@ -50,11 +51,15 @@ class RAGService:
         retrieval_mode=RETRIEVAL_MODE,
         retrieval_pipeline=None,
         generator=None,
+        grounding_mode=GROUNDING_MODE,
     ):
 
         print(
             "Initializing RAG service..."
         )
+
+        self.grounding_mode = grounding_mode
+        self.system_prompt = get_system_prompt(grounding_mode)
 
         self.retrieval_pipeline = retrieval_pipeline or RetrievalPipeline(
             use_reranker=USE_RERANKER if use_reranker is None else use_reranker,
@@ -92,12 +97,7 @@ class RAGService:
 
             return RAGResult(
                 question=question,
-                answer=(
-                    "I don't have enough "
-                    "information in the "
-                    "provided sources to "
-                    "answer that question."
-                ),
+                answer=self._insufficient_answer(),
                 chunks=[],
                 retrieval_seconds=(
                     retrieval_seconds
@@ -122,7 +122,7 @@ class RAGService:
         messages = [
             {
                 "role": "system",
-                "content": SYSTEM_PROMPT,
+                "content": self.system_prompt,
             },
             {
                 "role": "user",
@@ -171,3 +171,12 @@ class RAGService:
         return lexical_score is not None or (
             similarity is not None and similarity >= MIN_RETRIEVAL_SIMILARITY
         )
+
+    def _insufficient_answer(self):
+        refusal = (
+            "I don't have enough information in the provided sources to "
+            "answer that question."
+        )
+        if self.grounding_mode == "strict":
+            return f"EVIDENCE_STATUS: INSUFFICIENT\n\n{refusal}"
+        return refusal

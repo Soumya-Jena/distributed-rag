@@ -129,3 +129,44 @@ class LocalGenerator:
 
         if generation_errors:
             raise generation_errors[0]
+
+    def generate_batch(
+        self,
+        message_batches,
+        max_new_tokens: int = MAX_NEW_TOKENS,
+    ):
+        """Generate several deterministic answers in one model invocation."""
+        if not message_batches:
+            return []
+
+        previous_padding_side = self.tokenizer.padding_side
+        self.tokenizer.padding_side = "left"
+        try:
+            inputs = self.tokenizer.apply_chat_template(
+                message_batches,
+                add_generation_prompt=True,
+                tokenize=True,
+                padding=True,
+                return_dict=True,
+                return_tensors="pt",
+            )
+            input_width = int(inputs["input_ids"].shape[-1])
+            input_device = next(self.model.parameters()).device
+            inputs = {key: value.to(input_device) for key, value in inputs.items()}
+            with torch.inference_mode():
+                output_ids = self.model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    do_sample=False,
+                    pad_token_id=self.tokenizer.eos_token_id,
+                )
+            generated_ids = output_ids[:, input_width:]
+            return [
+                text.strip()
+                for text in self.tokenizer.batch_decode(
+                    generated_ids,
+                    skip_special_tokens=True,
+                )
+            ]
+        finally:
+            self.tokenizer.padding_side = previous_padding_side

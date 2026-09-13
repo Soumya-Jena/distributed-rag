@@ -39,11 +39,20 @@ def main():
         help="Choose dense vector retrieval or hybrid vector + lexical retrieval",
     )
 
+    parser.add_argument(
+        "--grounding-mode",
+        choices=["baseline", "strict"],
+        default=None,
+        help="Choose the baseline prompt or strict evidence contract",
+    )
+
     args = parser.parse_args()
 
     rag_options = {"use_reranker": args.use_reranker}
     if args.retrieval_mode is not None:
         rag_options["retrieval_mode"] = args.retrieval_mode
+    if args.grounding_mode is not None:
+        rag_options["grounding_mode"] = args.grounding_mode
     rag = RAGService(**rag_options)
 
     result = rag.answer(
