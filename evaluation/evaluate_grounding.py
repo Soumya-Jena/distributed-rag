@@ -69,7 +69,7 @@ def token_count(generator, messages):
         add_generation_prompt=True,
         tokenize=True,
     )
-    return len(encoded)
+    return len(encoded["input_ids"])
 
 
 def derived_status(answer):

@@ -45,6 +45,12 @@ def main():
         default=None,
         help="Choose the baseline prompt or strict evidence contract",
     )
+    parser.add_argument(
+        "--security-mode",
+        choices=["baseline", "structured", "layered"],
+        default=None,
+        help="Select baseline, structured context, or layered controls (strict grounding)",
+    )
 
     args = parser.parse_args()
 
@@ -53,6 +59,8 @@ def main():
         rag_options["retrieval_mode"] = args.retrieval_mode
     if args.grounding_mode is not None:
         rag_options["grounding_mode"] = args.grounding_mode
+    if args.security_mode is not None:
+        rag_options["security_mode"] = args.security_mode
     rag = RAGService(**rag_options)
 
     result = rag.answer(

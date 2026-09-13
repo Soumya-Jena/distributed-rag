@@ -51,3 +51,21 @@ python -m evaluation.plot_grounding_results
 ```
 
 See `experiments/day-09/report.md` for the claim-level review and limitations.
+
+## Security experiment
+
+The security test uses a separate `ragdb_security` database and `datasets/security`; it does not ingest synthetic attacks into the normal corpus. Six synthetic poisoned documents include instruction override, prompt extraction, citation hijack, output hijack, social-engineering, and retrieval-poisoning cases. No real credentials are used.
+
+```powershell
+python -m evaluation.setup_security_db
+$previousDatabaseUrl = $env:DATABASE_URL
+$env:DATABASE_URL = "postgresql://rag:rag@localhost:5432/ragdb_security"
+python -m src.ingest datasets/security
+python -m evaluation.annotate_security_provenance
+$env:DATABASE_URL = $previousDatabaseUrl
+python -m evaluation.evaluate_security --mode all --batch-size 4 --max-new-tokens 32
+python -m evaluation.recount_security_tokens
+python -m evaluation.score_security
+```
+
+The evaluator always checks that it is connected to `ragdb_security`; it refuses to run on `ragdb`. It saves one raw-result CSV per mode and checkpoints after each model batch. `SECURITY_MODE=layered` enables source delimiting, injection flags, and an output guard for synthetic test markers. Neither regex detection nor marker blocking proves the answer is factually grounded. See `experiments/day-10/report.md` for results and limitations.

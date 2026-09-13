@@ -7,6 +7,7 @@ from src.config import (
     GROUNDING_MODE,
     MIN_RETRIEVAL_SIMILARITY,
     RETRIEVAL_MODE,
+    SECURITY_MODE,
     USE_RERANKER,
 )
 
@@ -17,6 +18,8 @@ from src.prompt import (
 
 from src.retriever import RetrievedChunk
 from src.retrieval_pipeline import RetrievalPipeline
+from src.security_policy import build_security_messages
+from src.output_guard import guard_output
 
 
 @dataclass
@@ -52,6 +55,7 @@ class RAGService:
         retrieval_pipeline=None,
         generator=None,
         grounding_mode=GROUNDING_MODE,
+        security_mode=SECURITY_MODE,
     ):
 
         print(
@@ -60,6 +64,11 @@ class RAGService:
 
         self.grounding_mode = grounding_mode
         self.system_prompt = get_system_prompt(grounding_mode)
+        if security_mode not in {"baseline", "structured", "layered"}:
+            raise ValueError(f"Unknown security mode: {security_mode}")
+        if security_mode != "baseline" and grounding_mode != "strict":
+            raise ValueError("Structured security modes require strict grounding")
+        self.security_mode = security_mode
 
         self.retrieval_pipeline = retrieval_pipeline or RetrievalPipeline(
             use_reranker=USE_RERANKER if use_reranker is None else use_reranker,
@@ -114,21 +123,16 @@ class RAGService:
         # Prompt
         # -------------------------
 
-        prompt = build_user_prompt(
-            question,
-            chunks,
-        )
-
-        messages = [
-            {
-                "role": "system",
-                "content": self.system_prompt,
-            },
-            {
-                "role": "user",
-                "content": prompt,
-            },
-        ]
+        if self.security_mode == "baseline":
+            prompt = build_user_prompt(question, chunks)
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": prompt},
+            ]
+        else:
+            messages, _ = build_security_messages(
+                question, chunks, self.security_mode
+            )
 
         # -------------------------
         # Generation
@@ -139,6 +143,8 @@ class RAGService:
         answer = self.generator.generate(
             messages
         )
+        if self.security_mode == "layered":
+            answer, _ = guard_output(answer)
 
         generation_seconds = (
             perf_counter()

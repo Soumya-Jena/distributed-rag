@@ -81,3 +81,4 @@ HYBRID_CANDIDATE_K = int(os.getenv("HYBRID_CANDIDATE_K", "20"))
 RRF_K = int(os.getenv("RRF_K", "60"))
 
 GROUNDING_MODE = os.getenv("GROUNDING_MODE", "strict").lower()
+SECURITY_MODE = os.getenv("SECURITY_MODE", "layered").lower()
