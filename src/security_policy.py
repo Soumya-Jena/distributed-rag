@@ -2,7 +2,7 @@
 
 from html import escape
 
-from src.injection_detector import detect_injection
+from src.injection_detector import InjectionDetection, detect_injection
 from src.prompt import build_user_prompt, get_system_prompt
 
 
@@ -23,7 +23,10 @@ def build_secure_user_prompt(question, chunks, annotate=False):
     sources = []
     detections = []
     for index, chunk in enumerate(chunks, 1):
-        detection = detect_injection(chunk.content)
+        detection = (
+            detect_injection(chunk.content)
+            if annotate else InjectionDetection(False, ())
+        )
         detections.append(detection)
         attrs = (
             f'id="S{index}" trust="UNTRUSTED_EXTERNAL_CONTENT" '

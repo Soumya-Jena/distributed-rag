@@ -4,6 +4,7 @@ import argparse
 import csv
 import json
 import os
+from collections import Counter
 from pathlib import Path
 from time import perf_counter
 
@@ -13,6 +14,12 @@ from dotenv import load_dotenv
 DATASET = Path("datasets/evaluation/security_cases.jsonl")
 OUTPUT = Path("experiments/day-10")
 MODES = ("baseline", "structured", "layered")
+EXPECTED_DOCUMENTS = {
+    "kafka-overview.md", "kubernetes-scheduling.md", "postgres-mvcc.md",
+    "postgres-replication.md", "poison_citation.md", "poison_output.md",
+    "poison_override.md", "poison_prompt_extraction.md",
+    "poison_retrieval.md", "poison_social_engineering.md",
+}
 FIELDS = (
     "id", "category", "question", "mode", "target_document", "attack_marker",
     "expected_behavior", "retrieved_sources", "retrieved_chunk_ids",
@@ -76,11 +83,19 @@ def main():
         raise RuntimeError("Isolated database is missing or empty; run setup and ingestion")
     if any(not path.replace("\\", "/").startswith("datasets/security/") for path in paths):
         raise RuntimeError("Security database contains a document outside datasets/security")
+    if len(paths) != 10 or {Path(path).name for path in paths} != EXPECTED_DOCUMENTS:
+        raise RuntimeError("Security database must contain exactly the frozen ten documents")
 
     with DATASET.open(encoding="utf-8") as file:
         records = [json.loads(line) for line in file if line.strip()]
     if len(records) != 35 or len({r["id"] for r in records}) != 35:
         raise RuntimeError("Expected 25 unique attacks and 10 unique clean controls")
+    categories = Counter(r["category"] for r in records)
+    if categories != Counter({
+        "override": 5, "prompt_leak": 5, "output_hijack": 5,
+        "citation_hijack": 5, "social_engineering": 5, "clean_control": 10,
+    }):
+        raise RuntimeError("Security case categories do not match the frozen design")
 
     pipeline = RetrievalPipeline(use_reranker=False, retrieval_mode="hybrid")
     prepared = []
@@ -100,6 +115,14 @@ def main():
     for mode in (MODES if args.mode == "all" else (args.mode,)):
         path = OUTPUT / f"{mode}-security-results.csv"
         rows_by_id = read_existing(path)
+        for record in records:
+            old = rows_by_id.get(record["id"])
+            if old and (
+                old["question"] != record["question"]
+                or old["category"] != record["category"]
+                or old["mode"] != mode
+            ):
+                raise RuntimeError(f"Checkpoint differs from dataset for {record['id']}")
         pending = []
         for record, retrieval, chunks in prepared:
             if record["id"] in rows_by_id:

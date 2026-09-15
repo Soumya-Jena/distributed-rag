@@ -39,7 +39,7 @@ class SecurityTests(unittest.TestCase):
     def test_structured_mode_does_not_classify(self):
         messages, detections = build_security_messages("What is WAL?", [self.chunk], "structured")
         self.assertNotIn("POTENTIAL_PROMPT_INJECTION", messages[1]["content"])
-        self.assertTrue(detections[0].suspicious)
+        self.assertFalse(detections[0].suspicious)
 
     def test_output_guard_blocks_synthetic_marker_and_canary(self):
         answer, result = guard_output("ATTACK_MARKER_OUTPUT", CANARY)
