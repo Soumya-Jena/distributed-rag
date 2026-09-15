@@ -33,6 +33,7 @@ The default retrieval path combines dense MiniLM embeddings with PostgreSQL full
 python -m src.rag "How does PostgreSQL streaming replication work?"
 python -m src.rag "What is MVCC?" --retrieval-mode hybrid --reranker
 python -m src.rag "What is MVCC?" --grounding-mode strict
+python -m src.rag "What is MVCC?" --grounding-mode baseline
 python -m evaluation.inspect_hybrid
 python -m evaluation.evaluate_hybrid --label hybrid
 ```
@@ -68,4 +69,18 @@ python -m evaluation.recount_security_tokens
 python -m evaluation.score_security
 ```
 
-The evaluator always checks that it is connected to `ragdb_security`; it refuses to run on `ragdb`. It saves one raw-result CSV per mode and checkpoints after each model batch. `SECURITY_MODE=layered` enables source delimiting, injection flags, and an output guard for synthetic test markers. Neither regex detection nor marker blocking proves the answer is factually grounded. See `experiments/day-10/report.md` for results and limitations.
+The evaluator always checks that it is connected to `ragdb_security`; it refuses to run on `ragdb`. It saves one raw-result CSV per mode and checkpoints after each model batch. `SECURITY_MODE=layered` enables source delimiting, injection flags, and an output guard for synthetic test markers. All three modes had 0% conditional marker/canary ASR in this small test, while the layered detector found six of nine poisoned chunks with no clean-chunk flags. Neither regex detection nor marker blocking proves the answer is factually grounded. See `experiments/day-10/report.md` for results and limitations.
+
+## Query transformation
+
+The query experiment compares original-only retrieval, rewrite-only retrieval, original plus one rewrite, and original plus three diverse variants. Each query still uses the selected hybrid retrieval path; a second RRF pass combines candidates across variants and records which query found each chunk. Optional reranking always compares candidates with the original question. The secure grounding and output controls remain downstream of retrieval.
+
+```powershell
+python -m evaluation.evaluate_multi_query
+python -m evaluation.inspect_query_transform --limit 20 --batch-size 4 --max-new-tokens 64
+python -m evaluation.plot_multi_query_results
+python -m src.query_search "Why is the log filling the disk?" --strategy multi_query
+python -m src.rag "Why is the log filling the disk?" --query-strategy multi_query
+```
+
+Multi-query retrieval improved Hit@1 from 0.92 to 1.00 on the frozen 50-question benchmark, but it remains opt-in because retrieval was about four times slower and the separate Qwen review averaged 67.9 seconds per transformation with imperfect meaning preservation. See `experiments/day-11/report.md` for the complete comparison and limitations.

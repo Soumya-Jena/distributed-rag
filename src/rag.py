@@ -51,16 +51,28 @@ def main():
         default=None,
         help="Select baseline, structured context, or layered controls (strict grounding)",
     )
+    parser.add_argument(
+        "--query-strategy",
+        choices=["original", "rewrite_only", "original_rewrite", "multi_query"],
+        default="original",
+        help="Transform and fuse search queries before the existing secure RAG prompt",
+    )
 
     args = parser.parse_args()
 
-    rag_options = {"use_reranker": args.use_reranker}
+    rag_options = {
+        "use_reranker": args.use_reranker,
+        "query_strategy": args.query_strategy,
+    }
     if args.retrieval_mode is not None:
         rag_options["retrieval_mode"] = args.retrieval_mode
     if args.grounding_mode is not None:
         rag_options["grounding_mode"] = args.grounding_mode
     if args.security_mode is not None:
         rag_options["security_mode"] = args.security_mode
+    elif args.grounding_mode == "baseline":
+        # Preserve the pre-security CLI behavior for prompt A/B reproduction.
+        rag_options["security_mode"] = "baseline"
     rag = RAGService(**rag_options)
 
     result = rag.answer(
@@ -91,6 +103,16 @@ def main():
         rrf_score = getattr(chunk, "rrf_score", None)
         if rrf_score is not None:
             score_parts.append(f"rrf={rrf_score:.6f}")
+        found_by = getattr(chunk, "found_by", None)
+        if found_by:
+            score_parts.append(f"found_by={','.join(found_by)}")
+        query_ranks = getattr(chunk, "query_ranks", None)
+        if query_ranks:
+            score_parts.append(
+                "query_ranks=" + ",".join(
+                    f"{name}:{rank}" for name, rank in query_ranks.items()
+                )
+            )
 
         print(
             f"[S{index}] "
@@ -101,6 +123,11 @@ def main():
 
     print("\nPERFORMANCE")
     print("===========")
+
+    print(
+        f"Transform  : "
+        f"{result.transformation_seconds:.3f}s"
+    )
 
     print(
         f"Vector     : "

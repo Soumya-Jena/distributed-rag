@@ -15,24 +15,25 @@ from src.config import (
 
 class LocalGenerator:
 
-    def __init__(self):
+    def __init__(self, model_name=GENERATION_MODEL):
 
         self.last_input_token_count = 0
+        self.model_name = model_name
 
         print(
             f"Loading generation model: "
-            f"{GENERATION_MODEL}"
+            f"{model_name}"
         )
 
         self.tokenizer = (
             AutoTokenizer.from_pretrained(
-                GENERATION_MODEL
+                model_name
             )
         )
 
         self.model = (
             AutoModelForCausalLM.from_pretrained(
-                GENERATION_MODEL,
+                model_name,
                 torch_dtype="auto",
                 device_map="auto",
             )

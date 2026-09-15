@@ -82,3 +82,10 @@ RRF_K = int(os.getenv("RRF_K", "60"))
 
 GROUNDING_MODE = os.getenv("GROUNDING_MODE", "strict").lower()
 SECURITY_MODE = os.getenv("SECURITY_MODE", "layered").lower()
+QUERY_TRANSFORM_MODEL = os.getenv(
+    "QUERY_TRANSFORM_MODEL", "Qwen/Qwen2.5-1.5B-Instruct"
+)
+QUERY_VARIANTS = int(os.getenv("QUERY_VARIANTS", "3"))
+QUERY_TRANSFORM_ENABLED = os.getenv("QUERY_TRANSFORM_ENABLED", "true").lower() in {
+    "1", "true", "yes",
+}

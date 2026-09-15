@@ -1,0 +1,5 @@
+strategy,query_type,questions,hit@1,hit@5,mrr,candidate_hit@20,rescue_rate@1,regression_rate@1,rescue_rate@5,regression_rate@5,mean_retrieval_seconds,mean_query_count
+original,ALL,50,0.92,1,0.9406666666666667,1,0,0,,0,0.14983712999150156,1
+rewrite_only,ALL,50,0.98,1,0.99,1,0.75,0,,0,0.1517993739945814,1
+original_rewrite,ALL,50,0.98,1,0.99,1,0.75,0,,0,0.2954898960283026,2
+multi_query,ALL,50,1,1,1.0,1,1,0,,0,0.5916800260078162,4

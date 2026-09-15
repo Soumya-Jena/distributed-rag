@@ -1,0 +1,7 @@
+query_type,questions,meaning_preservation,identifier_preservation,hallucinated_terminology_rate,fallback_rate,mean_transformation_seconds
+ALL,20,0.775,0.9,0.15,0.2,67.89276387999999
+DIRECT,4,1.0,1,0,0.25,68.39897282500169
+EXACT_IDENTIFIER,4,0.875,1,0,0.25,67.33540706874919
+MULTI_PART,4,0.625,0.5,0.25,0.5,66.78381186249317
+PARAPHRASE,4,0.875,1,0,0,68.42503465000482
+VAGUE,4,0.5,1,0.5,0,68.52059299375105
