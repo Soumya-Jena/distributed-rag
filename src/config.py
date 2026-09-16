@@ -89,3 +89,8 @@ QUERY_VARIANTS = int(os.getenv("QUERY_VARIANTS", "3"))
 QUERY_TRANSFORM_ENABLED = os.getenv("QUERY_TRANSFORM_ENABLED", "true").lower() in {
     "1", "true", "yes",
 }
+CONTEXT_STRATEGY = os.getenv("CONTEXT_STRATEGY", "full").lower()
+CONTEXT_DEDUP_THRESHOLD = float(os.getenv("CONTEXT_DEDUP_THRESHOLD", "0.92"))
+CONTEXT_KEEP_RATIO = float(os.getenv("CONTEXT_KEEP_RATIO", "0.50"))
+CONTEXT_TOKEN_BUDGET = int(os.getenv("CONTEXT_TOKEN_BUDGET", "1000"))
+CONTEXT_NEIGHBOR_WINDOW = int(os.getenv("CONTEXT_NEIGHBOR_WINDOW", "0"))

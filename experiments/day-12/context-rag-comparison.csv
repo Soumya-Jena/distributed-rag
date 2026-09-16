@@ -1,0 +1,5 @@
+strategy,questions,mean_context_tokens,mean_prompt_tokens,mean_output_tokens,mean_generation_seconds,correctness,faithfulness,citation_presence,citation_support
+full,5,400,1101.6,20.8,109.75406589997002,0.8,1,0,0
+deduplicated,5,400,1101.6,20.8,reused,0.8,1,0,0
+extractive,5,252,952,20,95.8786407200154,0.6,1,0,0
+budgeted,5,230,929.4,20,96.38589564996073,0.6,1,0,0

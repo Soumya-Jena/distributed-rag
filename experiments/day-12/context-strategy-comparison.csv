@@ -1,0 +1,5 @@
+strategy,questions,mean_context_tokens,mean_removed_tokens,mean_compression_ratio,relevant_source_retention,mean_unique_sources,mean_relevant_evidence_density_proxy,mean_optimization_seconds
+full,50,402.06,0,0.0,1,2.16,0.8558915895661066,0.0067730619991198185
+deduplicated,50,402.06,0,0.0,1,2.16,0.8558915895661066,0.08431546800304204
+extractive,50,236.52,165.54,0.41196971128899934,1,2.16,1.4775495903548235,0.3028624859871343
+budgeted,50,226.7,175.36,0.43485773508904624,0.98,2.1,1.5109083092452982,0.30057765198405834

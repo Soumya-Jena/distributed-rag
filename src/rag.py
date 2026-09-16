@@ -57,6 +57,12 @@ def main():
         default="original",
         help="Transform and fuse search queries before the existing secure RAG prompt",
     )
+    parser.add_argument(
+        "--context-strategy",
+        choices=["full", "deduplicated", "extractive", "budgeted"],
+        default=None,
+        help="Optimize retrieved evidence before the secure generation boundary",
+    )
 
     args = parser.parse_args()
 
@@ -64,6 +70,8 @@ def main():
         "use_reranker": args.use_reranker,
         "query_strategy": args.query_strategy,
     }
+    if args.context_strategy is not None:
+        rag_options["context_strategy"] = args.context_strategy
     if args.retrieval_mode is not None:
         rag_options["retrieval_mode"] = args.retrieval_mode
     if args.grounding_mode is not None:
@@ -150,13 +158,29 @@ def main():
     )
 
     print(
+        f"Context opt: "
+        f"{result.optimization_seconds:.3f}s"
+    )
+
+    print(
         f"Generation : "
         f"{result.generation_seconds:.3f}s"
     )
 
     print(
+        f"Context tokens: "
+        f"{result.context_tokens} / {result.original_context_tokens} "
+        f"(compression={result.compression_ratio:.1%})"
+    )
+
+    print(
         f"Prompt tokens: "
         f"{result.prompt_tokens}"
+    )
+
+    print(
+        f"Output tokens: "
+        f"{result.output_tokens}"
     )
 
 

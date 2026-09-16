@@ -18,6 +18,7 @@ class LocalGenerator:
     def __init__(self, model_name=GENERATION_MODEL):
 
         self.last_input_token_count = 0
+        self.last_output_token_count = 0
         self.model_name = model_name
 
         print(
@@ -51,12 +52,17 @@ class LocalGenerator:
         max_new_tokens: int = MAX_NEW_TOKENS,
     ):
 
-        return "".join(
+        output = "".join(
             self.generate_stream(
                 messages,
                 max_new_tokens,
             )
         ).strip()
+        self.last_output_token_count = self.count_tokens(output)
+        return output
+
+    def count_tokens(self, text: str) -> int:
+        return len(self.tokenizer.encode(text, add_special_tokens=False))
 
     def generate_stream(
         self,

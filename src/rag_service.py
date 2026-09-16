@@ -5,6 +5,11 @@ from src.generator import LocalGenerator
 
 from src.config import (
     GROUNDING_MODE,
+    CONTEXT_DEDUP_THRESHOLD,
+    CONTEXT_KEEP_RATIO,
+    CONTEXT_NEIGHBOR_WINDOW,
+    CONTEXT_STRATEGY,
+    CONTEXT_TOKEN_BUDGET,
     MIN_RETRIEVAL_SIMILARITY,
     RETRIEVAL_MODE,
     SECURITY_MODE,
@@ -22,6 +27,7 @@ from src.retriever import RetrievedChunk
 from src.retrieval_pipeline import RetrievalPipeline
 from src.multi_query_retriever import MultiQueryRetriever
 from src.query_transformer import QueryTransformer
+from src.context_optimizer import ContextOptimizer, STRATEGIES
 from src.security_policy import build_security_messages
 from src.output_guard import guard_output
 
@@ -49,6 +55,16 @@ class RAGResult:
 
     generation_seconds: float
 
+    optimization_seconds: float
+
+    original_context_tokens: int
+
+    context_tokens: int
+
+    output_tokens: int
+
+    compression_ratio: float
+
     prompt_tokens: int
 
 
@@ -65,6 +81,8 @@ class RAGService:
         query_strategy="original",
         query_transformer=None,
         multi_query_retriever=None,
+        context_strategy=CONTEXT_STRATEGY,
+        context_optimizer=None,
     ):
 
         print(
@@ -86,6 +104,9 @@ class RAGService:
         if query_strategy != "original" and not QUERY_TRANSFORM_ENABLED:
             raise ValueError("Query transformation is disabled by configuration")
         self.query_strategy = query_strategy
+        if context_strategy not in STRATEGIES:
+            raise ValueError(f"Unknown context strategy: {context_strategy}")
+        self.context_strategy = context_strategy
         effective_reranker = USE_RERANKER if use_reranker is None else use_reranker
         self.retrieval_pipeline = None
         self.query_transformer = query_transformer
@@ -109,6 +130,32 @@ class RAGService:
                 multi_query_retriever
                 or MultiQueryRetriever(use_reranker=effective_reranker)
             )
+
+        if context_optimizer is None:
+            if context_strategy == "full":
+                embedding_service = None
+            elif query_strategy == "original":
+                embedding_service = (
+                    self.retrieval_pipeline.retriever.embedding_service
+                )
+            else:
+                embedding_service = (
+                    self.multi_query_retriever.hybrid_retriever
+                    .vector_retriever.embedding_service
+                )
+            token_counter = getattr(
+                self.generator, "count_tokens",
+                lambda text: len(text.split()),
+            )
+            context_optimizer = ContextOptimizer(
+                embedding_service=embedding_service,
+                token_counter=token_counter,
+                dedup_threshold=CONTEXT_DEDUP_THRESHOLD,
+                keep_ratio=CONTEXT_KEEP_RATIO,
+                token_budget=CONTEXT_TOKEN_BUDGET,
+                neighbor_window=CONTEXT_NEIGHBOR_WINDOW,
+            )
+        self.context_optimizer = context_optimizer
 
 
     def answer(
@@ -146,6 +193,11 @@ class RAGService:
 
         chunks = [chunk for chunk in chunks if self._passes_threshold(chunk)]
 
+        context_result = self.context_optimizer.optimize(
+            question, chunks, strategy=self.context_strategy
+        )
+        chunks = context_result.chunks
+
         retrieval_seconds = (
             vector_seconds + retrieval_result.rerank_seconds
             + lexical_seconds + fusion_seconds
@@ -166,6 +218,11 @@ class RAGService:
                 lexical_seconds=lexical_seconds,
                 fusion_seconds=fusion_seconds,
                 generation_seconds=0.0,
+                optimization_seconds=context_result.optimization_seconds,
+                original_context_tokens=context_result.original_tokens,
+                context_tokens=context_result.optimized_tokens,
+                output_tokens=0,
+                compression_ratio=context_result.compression_ratio,
                 prompt_tokens=0,
             )
 
@@ -216,6 +273,11 @@ class RAGService:
             generation_seconds=(
                 generation_seconds
             ),
+            optimization_seconds=context_result.optimization_seconds,
+            original_context_tokens=context_result.original_tokens,
+            context_tokens=context_result.optimized_tokens,
+            output_tokens=getattr(self.generator, "last_output_token_count", 0),
+            compression_ratio=context_result.compression_ratio,
             prompt_tokens=(
                 self.generator.last_input_token_count
             ),

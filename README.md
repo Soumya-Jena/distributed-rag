@@ -84,3 +84,19 @@ python -m src.rag "Why is the log filling the disk?" --query-strategy multi_quer
 ```
 
 Multi-query retrieval improved Hit@1 from 0.92 to 1.00 on the frozen 50-question benchmark, but it remains opt-in because retrieval was about four times slower and the separate Qwen review averaged 67.9 seconds per transformation with imperfect meaning preservation. See `experiments/day-11/report.md` for the complete comparison and limitations.
+
+## Context optimization
+
+Post-retrieval context handling supports full chunks, conservative near-duplicate removal, query-focused extractive sentence selection, and a global whole-sentence token budget. Every optimized fragment retains its original document, chunk, and sentence provenance. Full context remains the default because the 50% extractive arm reduced mean context tokens by 41.2% but did not preserve answer correctness in the small generation sample.
+
+```powershell
+python -m evaluation.evaluate_context
+python -m evaluation.evaluate_context_rag --max-new-tokens 20
+python -m evaluation.recount_context_tokens
+python -m evaluation.score_context_rag
+python -m evaluation.plot_context_results
+python -m src.rag "How does PostgreSQL streaming replication work?" --context-strategy extractive
+python -m src.rag "How does PostgreSQL streaming replication work?" --context-strategy budgeted
+```
+
+Configuration is available through `CONTEXT_STRATEGY`, `CONTEXT_DEDUP_THRESHOLD`, `CONTEXT_KEEP_RATIO`, `CONTEXT_TOKEN_BUDGET`, and `CONTEXT_NEIGHBOR_WINDOW`. See `experiments/day-12/report.md` for the complete results and limitations.
