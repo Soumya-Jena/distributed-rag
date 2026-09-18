@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from time import perf_counter
 
 from src.generator import LocalGenerator
@@ -10,6 +10,8 @@ from src.config import (
     CONTEXT_NEIGHBOR_WINDOW,
     CONTEXT_STRATEGY,
     CONTEXT_TOKEN_BUDGET,
+    GENERATION_MODEL,
+    RESPONSE_CACHE_ENABLED,
     MIN_RETRIEVAL_SIMILARITY,
     RETRIEVAL_MODE,
     SECURITY_MODE,
@@ -30,6 +32,8 @@ from src.query_transformer import QueryTransformer
 from src.context_optimizer import ContextOptimizer, STRATEGIES
 from src.security_policy import build_security_messages
 from src.output_guard import guard_output
+from src.cache import Cache
+from src.response_cache import ResponseCache
 
 
 @dataclass
@@ -67,6 +71,10 @@ class RAGResult:
 
     prompt_tokens: int
 
+    cache_stats: dict = field(default_factory=dict)
+
+    response_cache_hit: bool = False
+
 
 class RAGService:
 
@@ -83,6 +91,8 @@ class RAGService:
         multi_query_retriever=None,
         context_strategy=CONTEXT_STRATEGY,
         context_optimizer=None,
+        cache=None,
+        response_cache_enabled=RESPONSE_CACHE_ENABLED,
     ):
 
         print(
@@ -107,6 +117,8 @@ class RAGService:
         if context_strategy not in STRATEGIES:
             raise ValueError(f"Unknown context strategy: {context_strategy}")
         self.context_strategy = context_strategy
+        self.cache = cache or Cache()
+        self.response_cache_enabled = response_cache_enabled
         effective_reranker = USE_RERANKER if use_reranker is None else use_reranker
         self.retrieval_pipeline = None
         self.query_transformer = query_transformer
@@ -124,7 +136,8 @@ class RAGService:
                     == QUERY_TRANSFORM_MODEL else None
                 )
                 self.query_transformer = QueryTransformer(
-                    generator=shared_generator
+                    generator=shared_generator,
+                    cache=self.cache,
                 )
             self.multi_query_retriever = (
                 multi_query_retriever
@@ -156,9 +169,76 @@ class RAGService:
                 neighbor_window=CONTEXT_NEIGHBOR_WINDOW,
             )
         self.context_optimizer = context_optimizer
+        retrieval_fingerprint = (
+            self.retrieval_pipeline.result_cache.config_fingerprint
+            if self.retrieval_pipeline is not None
+            and hasattr(self.retrieval_pipeline, "result_cache")
+            else "multi-query"
+        )
+        self.response_cache = ResponseCache(
+            self.cache, retrieval_fingerprint, context_strategy,
+            query_strategy, grounding_mode, security_mode,
+            generator_model=getattr(
+                self.generator, "model_name", GENERATION_MODEL
+            ),
+        )
 
 
     def answer(
+        self,
+        question: str,
+        top_k: int = 5,
+    ):
+
+        if not self.response_cache_enabled:
+            return self._answer_uncached(question, top_k)
+
+        key = self.response_cache.key(question, top_k)
+        value, chunks, stats = self.response_cache.get(key)
+        if value is not None:
+            value["question"] = question
+            value["chunks"] = chunks
+            value["response_cache_hit"] = True
+            value.setdefault("cache_stats", {})["response"] = stats.to_dict()
+            return RAGResult(**value)
+        if not stats.available:
+            result = self._answer_uncached(question, top_k)
+            result.cache_stats["response"] = stats.to_dict()
+            return result
+
+        with self.cache.lock(f"lock:{key}") as acquired:
+            if not acquired:
+                value, chunks, waited_stats = self.response_cache.wait_for_fill(key)
+                if value is not None:
+                    value["question"] = question
+                    value["chunks"] = chunks
+                    value["response_cache_hit"] = True
+                    value.setdefault("cache_stats", {})["response"] = (
+                        waited_stats.to_dict()
+                    )
+                    return RAGResult(**value)
+                return self._answer_uncached(question, top_k)
+
+            # Double-check after acquiring the lock: another request may have
+            # populated the entry between our initial miss and SET-NX.
+            value, chunks, locked_stats = self.response_cache.get(key)
+            if value is not None:
+                value["question"] = question
+                value["chunks"] = chunks
+                value["response_cache_hit"] = True
+                value.setdefault("cache_stats", {})["response"] = (
+                    locked_stats.to_dict()
+                )
+                return RAGResult(**value)
+
+            result = self._answer_uncached(question, top_k)
+            result.cache_stats["response"] = stats.to_dict()
+            if self.response_cache.eligible(result):
+                self.response_cache.set(key, result)
+            return result
+
+
+    def _answer_uncached(
         self,
         question: str,
         top_k: int = 5,
@@ -177,6 +257,17 @@ class RAGService:
             vector_seconds = retrieval_result.vector_seconds
             lexical_seconds = retrieval_result.lexical_seconds
             fusion_seconds = retrieval_result.fusion_seconds
+            cache_stat = getattr(retrieval_result, "cache_stats", None)
+            retrieval_cache_stats = (
+                cache_stat.to_dict() if cache_stat is not None else {}
+            )
+            embedding_service = getattr(
+                getattr(self.retrieval_pipeline, "retriever", None),
+                "embedding_service", None,
+            )
+            embedding_cache_stats = getattr(
+                embedding_service, "last_cache_stats", None
+            )
         else:
             started = perf_counter()
             variants = self.query_transformer.transform(question)
@@ -188,6 +279,10 @@ class RAGService:
             vector_seconds = 0.0
             lexical_seconds = 0.0
             fusion_seconds = retrieval_result.retrieval_seconds
+            retrieval_cache_stats = getattr(
+                retrieval_result, "cache_stats", {}
+            )
+            embedding_cache_stats = None
 
         chunks = retrieval_result.final_chunks
 
@@ -224,6 +319,13 @@ class RAGService:
                 output_tokens=0,
                 compression_ratio=context_result.compression_ratio,
                 prompt_tokens=0,
+                cache_stats={
+                    "retrieval": retrieval_cache_stats,
+                    "embedding": (
+                        embedding_cache_stats.to_dict()
+                        if embedding_cache_stats else {}
+                    ),
+                },
             )
 
         # -------------------------
@@ -281,6 +383,19 @@ class RAGService:
             prompt_tokens=(
                 self.generator.last_input_token_count
             ),
+            cache_stats={
+                "retrieval": retrieval_cache_stats,
+                "embedding": (
+                    embedding_cache_stats.to_dict()
+                    if embedding_cache_stats else {}
+                ),
+                "query_transform": (
+                    self.query_transformer.last_cache_stats.to_dict()
+                    if self.query_transformer is not None
+                    and hasattr(self.query_transformer, "last_cache_stats")
+                    else {}
+                ),
+            },
         )
 
     @staticmethod

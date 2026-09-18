@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from time import perf_counter
 
 from src.config import (
+    CACHE_ENABLED,
     HYBRID_CANDIDATE_K,
     LEXICAL_CANDIDATE_K,
     RERANK_TOP_K,
@@ -12,6 +13,8 @@ from src.config import (
 from src.hybrid_retriever import HybridRetriever
 from src.reranker import Reranker
 from src.retriever import RetrievedChunk, Retriever
+from src.cache import Cache, CacheStats
+from src.retrieval_cache import RetrievalCache
 
 
 @dataclass
@@ -23,6 +26,8 @@ class RetrievalResult:
     lexical_seconds: float = 0.0
     fusion_seconds: float = 0.0
     reranked_chunks: list | None = None
+    cache_stats: CacheStats = CacheStats()
+    corpus_version: int | None = None
 
 
 class RetrievalPipeline:
@@ -33,6 +38,7 @@ class RetrievalPipeline:
         retriever=None,
         hybrid_retriever=None,
         reranker=None,
+        cache=None,
     ):
         self.retriever = retriever or Retriever()
         self.retrieval_mode = retrieval_mode
@@ -43,6 +49,16 @@ class RetrievalPipeline:
             self.hybrid_retriever = HybridRetriever(vector_retriever=self.retriever)
         self.use_reranker = use_reranker
         self.reranker = (reranker or Reranker()) if use_reranker else None
+        self.cache = cache or Cache(
+            enabled=(
+                CACHE_ENABLED
+                and retriever is None
+                and hybrid_retriever is None
+            )
+        )
+        self.result_cache = RetrievalCache(
+            self.cache, retrieval_mode, use_reranker
+        )
 
     def retrieve(
         self,
@@ -50,6 +66,22 @@ class RetrievalPipeline:
         candidate_k=RETRIEVAL_CANDIDATE_K,
         final_k=RERANK_TOP_K,
     ):
+        cached, cache_stats, cache_key, corpus_version = self.result_cache.get(
+            query, candidate_k, final_k
+        )
+        if cached is not None:
+            candidates, final = cached
+            return RetrievalResult(
+                candidate_chunks=candidates,
+                final_chunks=final,
+                vector_seconds=0.0,
+                rerank_seconds=0.0,
+                lexical_seconds=0.0,
+                fusion_seconds=0.0,
+                cache_stats=cache_stats,
+                corpus_version=corpus_version,
+            )
+
         lexical_seconds = 0.0
         fusion_seconds = 0.0
         if self.retrieval_mode == "hybrid":
@@ -70,19 +102,23 @@ class RetrievalPipeline:
             vector_seconds = perf_counter() - started
 
         if not self.use_reranker:
-            return RetrievalResult(
+            result = RetrievalResult(
                 candidate_chunks=candidates,
                 final_chunks=candidates[:final_k],
                 vector_seconds=vector_seconds,
                 rerank_seconds=0.0,
                 lexical_seconds=lexical_seconds,
                 fusion_seconds=fusion_seconds,
+                cache_stats=cache_stats,
+                corpus_version=corpus_version,
             )
+            self.result_cache.set(cache_key, result.candidate_chunks, result.final_chunks)
+            return result
 
         started = perf_counter()
         reranked = self.reranker.rerank(query, candidates, top_k=final_k)
         rerank_seconds = perf_counter() - started
-        return RetrievalResult(
+        result = RetrievalResult(
             candidate_chunks=candidates,
             final_chunks=[item.chunk for item in reranked],
             vector_seconds=vector_seconds,
@@ -90,4 +126,8 @@ class RetrievalPipeline:
             lexical_seconds=lexical_seconds,
             fusion_seconds=fusion_seconds,
             reranked_chunks=reranked,
+            cache_stats=cache_stats,
+            corpus_version=corpus_version,
         )
+        self.result_cache.set(cache_key, result.candidate_chunks, result.final_chunks)
+        return result

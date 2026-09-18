@@ -63,6 +63,16 @@ def main():
         default=None,
         help="Optimize retrieved evidence before the secure generation boundary",
     )
+    response_cache_group = parser.add_mutually_exclusive_group()
+    response_cache_group.add_argument(
+        "--response-cache", dest="response_cache_enabled",
+        action="store_true", help="Experimentally cache grounded cited answers",
+    )
+    response_cache_group.add_argument(
+        "--no-response-cache", dest="response_cache_enabled",
+        action="store_false", help="Disable final-response caching",
+    )
+    parser.set_defaults(response_cache_enabled=None)
 
     args = parser.parse_args()
 
@@ -72,6 +82,8 @@ def main():
     }
     if args.context_strategy is not None:
         rag_options["context_strategy"] = args.context_strategy
+    if args.response_cache_enabled is not None:
+        rag_options["response_cache_enabled"] = args.response_cache_enabled
     if args.retrieval_mode is not None:
         rag_options["retrieval_mode"] = args.retrieval_mode
     if args.grounding_mode is not None:
@@ -182,6 +194,12 @@ def main():
         f"Output tokens: "
         f"{result.output_tokens}"
     )
+
+    print("Cache      : " + ", ".join(
+        f"{layer}={'HIT' if values.get('hit') else 'MISS'}"
+        for layer, values in result.cache_stats.items()
+        if values
+    ))
 
 
 if __name__ == "__main__":

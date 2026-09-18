@@ -1,0 +1,4 @@
+request,corpus_version,retrieval_cache_hit
+first,2,0
+repeat,2,1
+after_version_bump,3,0

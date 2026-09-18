@@ -100,3 +100,20 @@ python -m src.rag "How does PostgreSQL streaming replication work?" --context-st
 ```
 
 Configuration is available through `CONTEXT_STRATEGY`, `CONTEXT_DEDUP_THRESHOLD`, `CONTEXT_KEEP_RATIO`, `CONTEXT_TOKEN_BUDGET`, and `CONTEXT_NEIGHBOR_WINDOW`. See `experiments/day-12/report.md` for the complete results and limitations.
+
+## Caching and invalidation
+
+Redis caches exact normalized query embeddings, optional query transformations, and identifier-only retrieval rankings. Cache keys include model, prompt, retrieval, and chunking fingerprints; retrieval and experimental response keys also include the monotonic corpus version. Re-ingesting identical content does not advance that version. Redis failures log a warning and compute normally.
+
+```powershell
+docker compose up -d redis postgres
+python -m src.ingest datasets/raw
+python -m evaluation.build_cache_workload
+python -m evaluation.evaluate_cache --label cold --flush
+python -m evaluation.evaluate_cache --label warm
+python -m evaluation.evaluate_embedding_cache
+python -m evaluation.summarize_cache
+python -m evaluation.plot_cache_results
+```
+
+Final-response caching is intentionally disabled by default. Enable it only for a controlled run with `--response-cache`; uncited, invalidly cited, insufficient, blocked, and failed outputs are not admitted. See `experiments/day-13/report.md` for measured results and limitations.

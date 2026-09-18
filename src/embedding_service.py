@@ -1,4 +1,10 @@
+from time import perf_counter
+
+import numpy as np
 from sentence_transformers import SentenceTransformer
+
+from src.cache import Cache, CacheStats, fingerprint, hash_text, normalize_query
+from src.config import EMBEDDING_CACHE_TTL
 
 
 MODEL_CONFIGS = {
@@ -21,12 +27,19 @@ MODEL_CONFIGS = {
 
 
 class EmbeddingService:
-    def __init__(self, model_name):
+    def __init__(self, model_name, cache=None):
         if model_name not in MODEL_CONFIGS:
             raise ValueError(f"Unsupported embedding model: {model_name}")
 
         self.model_name = model_name
         self.config = MODEL_CONFIGS[model_name]
+        self.cache = cache or Cache()
+        self.cache_fingerprint = fingerprint({
+            "model": model_name,
+            "normalize": True,
+            "query_prefix": self.config["query_prefix"],
+        })
+        self.last_cache_stats = CacheStats()
         print(f"Loading embedding model: {model_name}")
         self.model = SentenceTransformer(model_name)
         actual_dimension = self.model.get_embedding_dimension()
@@ -49,9 +62,34 @@ class EmbeddingService:
             normalize_embeddings=True,
         )
 
-    def encode_query(self, query):
+    def _encode_query_uncached(self, query):
         return self.model.encode(
             self.config["query_prefix"] + query,
             convert_to_numpy=True,
             normalize_embeddings=True,
         )
+
+    def encode_query(self, query):
+        normalized = normalize_query(query)
+        key = (
+            f"embedding:{self.cache_fingerprint}:"
+            f"{hash_text(normalized)}"
+        )
+        cached, lookup = self.cache.lookup_json(key)
+        if cached is not None:
+            self.last_cache_stats = lookup
+            return np.asarray(cached, dtype=np.float32)
+
+        started = perf_counter()
+        embedding = self._encode_query_uncached(normalized)
+        compute_seconds = perf_counter() - started
+        self.cache.set_json(
+            key, embedding.tolist(), EMBEDDING_CACHE_TTL
+        )
+        self.last_cache_stats = CacheStats(
+            hit=False,
+            cache_lookup_seconds=lookup.cache_lookup_seconds,
+            compute_seconds=compute_seconds,
+            available=lookup.available,
+        )
+        return embedding

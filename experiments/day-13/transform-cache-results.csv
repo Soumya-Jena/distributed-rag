@@ -1,0 +1,3 @@
+state,cache_hit,cache_available,cache_lookup_seconds,compute_seconds,end_to_end_seconds,semantic,technical,alternate
+cold,0,1,0.0016461999621242285,23.725732600083575,23.733621299965307,How does PostgreSQL streaming replication work?,How does PostgreSQL streaming replication work?,How does PostgreSQL streaming replication work?
+warm,1,1,0.0008543999865651131,0.0,0.0009085999336093664,How does PostgreSQL streaming replication work?,How does PostgreSQL streaming replication work?,How does PostgreSQL streaming replication work?

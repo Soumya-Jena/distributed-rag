@@ -1,0 +1,7 @@
+state,response_cache_hit,end_to_end_seconds,answer,chunk_ids,corpus_version,synthetic_generator
+cold,0,0.2543603000231087,"EVIDENCE_STATUS: SUPPORTED
+
+Streaming replication sends WAL from a primary to standby servers. [S1]",196|197|199|200|194,3,1
+warm,1,0.11284290021285415,"EVIDENCE_STATUS: SUPPORTED
+
+Streaming replication sends WAL from a primary to standby servers. [S1]",196|197|199|200|194,3,1

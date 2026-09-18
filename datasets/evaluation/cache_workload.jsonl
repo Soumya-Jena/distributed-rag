@@ -1,0 +1,100 @@
+{"id": "cache-001", "kind": "unique", "source_id": "qt001", "query": "How does PostgreSQL streaming replication work?"}
+{"id": "cache-002", "kind": "unique", "source_id": "qt002", "query": "How does PostgreSQL MVCC determine row visibility?"}
+{"id": "cache-003", "kind": "unique", "source_id": "qt003", "query": "How does Kubernetes select a node for a Pod?"}
+{"id": "cache-004", "kind": "unique", "source_id": "qt004", "query": "What is Apache Kafka used for?"}
+{"id": "cache-005", "kind": "unique", "source_id": "qt005", "query": "What trade-off does synchronous PostgreSQL replication make?"}
+{"id": "cache-006", "kind": "unique", "source_id": "qt006", "query": "What does PostgreSQL VACUUM do?"}
+{"id": "cache-007", "kind": "unique", "source_id": "qt007", "query": "How do Kubernetes taints and tolerations affect scheduling?"}
+{"id": "cache-008", "kind": "unique", "source_id": "qt008", "query": "How do Kafka consumer groups divide work?"}
+{"id": "cache-009", "kind": "unique", "source_id": "qt009", "query": "Why can a PostgreSQL replication slot consume disk space?"}
+{"id": "cache-010", "kind": "unique", "source_id": "qt010", "query": "How does logical replication differ from physical streaming replication?"}
+{"id": "cache-011", "kind": "unique", "source_id": "qt011", "query": "How can database readers see stable data without making writers wait?"}
+{"id": "cache-012", "kind": "unique", "source_id": "qt012", "query": "How are change records shipped and applied to a backup database?"}
+{"id": "cache-013", "kind": "unique", "source_id": "qt013", "query": "What decides where a newly requested workload runs in a cluster?"}
+{"id": "cache-014", "kind": "unique", "source_id": "qt014", "query": "How can separate applications independently reread the same ordered events?"}
+{"id": "cache-015", "kind": "unique", "source_id": "qt015", "query": "Why might old copies of updated rows remain on disk?"}
+{"id": "cache-016", "kind": "unique", "source_id": "qt016", "query": "How does the cluster avoid placing a workload on an unsuitable machine?"}
+{"id": "cache-017", "kind": "unique", "source_id": "qt017", "query": "How is an event log spread across servers for parallelism and resilience?"}
+{"id": "cache-018", "kind": "unique", "source_id": "qt018", "query": "What happens when the main database disappears and a copy must take writes?"}
+{"id": "cache-019", "kind": "unique", "source_id": "qt019", "query": "Why do declared resources matter more than momentary usage for workload placement?"}
+{"id": "cache-020", "kind": "unique", "source_id": "qt020", "query": "How can a stream reader go back and process earlier records again?"}
+{"id": "cache-021", "kind": "unique", "source_id": "qt021", "query": "Why are old versions not getting cleaned up?"}
+{"id": "cache-022", "kind": "unique", "source_id": "qt022", "query": "Why is the replica falling behind?"}
+{"id": "cache-023", "kind": "unique", "source_id": "qt023", "query": "Why is my workload still pending?"}
+{"id": "cache-024", "kind": "unique", "source_id": "qt024", "query": "How can I read the same messages again?"}
+{"id": "cache-025", "kind": "unique", "source_id": "qt025", "query": "Why is commit slower now?"}
+{"id": "cache-026", "kind": "unique", "source_id": "qt026", "query": "Why do reads keep changing between statements?"}
+{"id": "cache-027", "kind": "unique", "source_id": "qt027", "query": "Why won't this workload run on that machine?"}
+{"id": "cache-028", "kind": "unique", "source_id": "qt028", "query": "Why isn't one reader handling every partition?"}
+{"id": "cache-029", "kind": "unique", "source_id": "qt029", "query": "Why is the log filling the disk?"}
+{"id": "cache-030", "kind": "unique", "source_id": "qt030", "query": "Who actually starts the containers?"}
+{"id": "cache-031", "kind": "unique", "source_id": "qt031", "query": "What does WAL do in PostgreSQL streaming replication?"}
+{"id": "cache-032", "kind": "unique", "source_id": "qt032", "query": "What does MVCC provide in PostgreSQL?"}
+{"id": "cache-033", "kind": "unique", "source_id": "qt033", "query": "What does VACUUM do with obsolete row versions?"}
+{"id": "cache-034", "kind": "unique", "source_id": "qt034", "query": "How does Read Committed choose snapshots?"}
+{"id": "cache-035", "kind": "unique", "source_id": "qt035", "query": "How does Repeatable Read use a snapshot?"}
+{"id": "cache-036", "kind": "unique", "source_id": "qt036", "query": "What does node affinity do for a Pod?"}
+{"id": "cache-037", "kind": "unique", "source_id": "qt037", "query": "What does kubelet do after Pod binding?"}
+{"id": "cache-038", "kind": "unique", "source_id": "qt038", "query": "What is a Kafka topic partition?"}
+{"id": "cache-039", "kind": "unique", "source_id": "qt039", "query": "What does a Kafka consumer group do?"}
+{"id": "cache-040", "kind": "unique", "source_id": "qt040", "query": "What is a replication slot?"}
+{"id": "cache-041", "kind": "exact_repeat", "source_id": "qt001", "query": "How does PostgreSQL streaming replication work?"}
+{"id": "cache-042", "kind": "exact_repeat", "source_id": "qt002", "query": "How does PostgreSQL MVCC determine row visibility?"}
+{"id": "cache-043", "kind": "exact_repeat", "source_id": "qt003", "query": "How does Kubernetes select a node for a Pod?"}
+{"id": "cache-044", "kind": "exact_repeat", "source_id": "qt004", "query": "What is Apache Kafka used for?"}
+{"id": "cache-045", "kind": "exact_repeat", "source_id": "qt005", "query": "What trade-off does synchronous PostgreSQL replication make?"}
+{"id": "cache-046", "kind": "exact_repeat", "source_id": "qt006", "query": "What does PostgreSQL VACUUM do?"}
+{"id": "cache-047", "kind": "exact_repeat", "source_id": "qt007", "query": "How do Kubernetes taints and tolerations affect scheduling?"}
+{"id": "cache-048", "kind": "exact_repeat", "source_id": "qt008", "query": "How do Kafka consumer groups divide work?"}
+{"id": "cache-049", "kind": "exact_repeat", "source_id": "qt009", "query": "Why can a PostgreSQL replication slot consume disk space?"}
+{"id": "cache-050", "kind": "exact_repeat", "source_id": "qt010", "query": "How does logical replication differ from physical streaming replication?"}
+{"id": "cache-051", "kind": "exact_repeat", "source_id": "qt011", "query": "How can database readers see stable data without making writers wait?"}
+{"id": "cache-052", "kind": "exact_repeat", "source_id": "qt012", "query": "How are change records shipped and applied to a backup database?"}
+{"id": "cache-053", "kind": "exact_repeat", "source_id": "qt013", "query": "What decides where a newly requested workload runs in a cluster?"}
+{"id": "cache-054", "kind": "exact_repeat", "source_id": "qt014", "query": "How can separate applications independently reread the same ordered events?"}
+{"id": "cache-055", "kind": "exact_repeat", "source_id": "qt015", "query": "Why might old copies of updated rows remain on disk?"}
+{"id": "cache-056", "kind": "exact_repeat", "source_id": "qt016", "query": "How does the cluster avoid placing a workload on an unsuitable machine?"}
+{"id": "cache-057", "kind": "exact_repeat", "source_id": "qt017", "query": "How is an event log spread across servers for parallelism and resilience?"}
+{"id": "cache-058", "kind": "exact_repeat", "source_id": "qt018", "query": "What happens when the main database disappears and a copy must take writes?"}
+{"id": "cache-059", "kind": "exact_repeat", "source_id": "qt019", "query": "Why do declared resources matter more than momentary usage for workload placement?"}
+{"id": "cache-060", "kind": "exact_repeat", "source_id": "qt020", "query": "How can a stream reader go back and process earlier records again?"}
+{"id": "cache-061", "kind": "exact_repeat", "source_id": "qt021", "query": "Why are old versions not getting cleaned up?"}
+{"id": "cache-062", "kind": "exact_repeat", "source_id": "qt022", "query": "Why is the replica falling behind?"}
+{"id": "cache-063", "kind": "exact_repeat", "source_id": "qt023", "query": "Why is my workload still pending?"}
+{"id": "cache-064", "kind": "exact_repeat", "source_id": "qt024", "query": "How can I read the same messages again?"}
+{"id": "cache-065", "kind": "exact_repeat", "source_id": "qt025", "query": "Why is commit slower now?"}
+{"id": "cache-066", "kind": "exact_repeat", "source_id": "qt026", "query": "Why do reads keep changing between statements?"}
+{"id": "cache-067", "kind": "exact_repeat", "source_id": "qt027", "query": "Why won't this workload run on that machine?"}
+{"id": "cache-068", "kind": "exact_repeat", "source_id": "qt028", "query": "Why isn't one reader handling every partition?"}
+{"id": "cache-069", "kind": "exact_repeat", "source_id": "qt029", "query": "Why is the log filling the disk?"}
+{"id": "cache-070", "kind": "exact_repeat", "source_id": "qt030", "query": "Who actually starts the containers?"}
+{"id": "cache-071", "kind": "near_repeat", "source_id": "qt001", "query": "How are database changes continuously copied from a PostgreSQL primary to a standby?"}
+{"id": "cache-072", "kind": "near_repeat", "source_id": "qt002", "query": "How does PostgreSQL decide which version of a row a transaction can see?"}
+{"id": "cache-073", "kind": "near_repeat", "source_id": "qt003", "query": "How is a worker machine chosen for a newly created Kubernetes workload?"}
+{"id": "cache-074", "kind": "near_repeat", "source_id": "qt004", "query": "What problem does Kafka solve for applications that exchange event data?"}
+{"id": "cache-075", "kind": "near_repeat", "source_id": "qt005", "query": "How does waiting for a standby affect durability and transaction delay?"}
+{"id": "cache-076", "kind": "near_repeat", "source_id": "qt006", "query": "How does PostgreSQL make space from obsolete row versions reusable?"}
+{"id": "cache-077", "kind": "near_repeat", "source_id": "qt007", "query": "How can nodes repel workloads while particular Pods are allowed onto them?"}
+{"id": "cache-078", "kind": "near_repeat", "source_id": "qt008", "query": "How are topic partitions shared among consumers working together?"}
+{"id": "cache-079", "kind": "near_repeat", "source_id": "qt009", "query": "Why can an inactive replication consumer cause retained log data to grow?"}
+{"id": "cache-080", "kind": "near_repeat", "source_id": "qt010", "query": "How does selected-table change replication differ from copying a whole PostgreSQL cluster?"}
+{"id": "cache-081", "kind": "near_repeat", "source_id": "qt011", "query": "How does PostgreSQL provide consistent snapshots while reads and writes run concurrently?"}
+{"id": "cache-082", "kind": "near_repeat", "source_id": "qt012", "query": "How does a primary send logged changes for a standby to replay?"}
+{"id": "cache-083", "kind": "near_repeat", "source_id": "qt013", "query": "How does Kubernetes choose the worker for a new Pod?"}
+{"id": "cache-084", "kind": "near_repeat", "source_id": "qt014", "query": "How do Kafka consumer groups independently process and replay topic events?"}
+{"id": "cache-085", "kind": "near_repeat", "source_id": "qt015", "query": "Why does PostgreSQL retain obsolete row versions until they are no longer visible?"}
+{"id": "cache-086", "kind": "near_repeat", "source_id": "qt016", "query": "How does Kubernetes filter nodes that cannot satisfy a Pod?"}
+{"id": "cache-087", "kind": "near_repeat", "source_id": "qt017", "query": "How do Kafka partitions and replicas distribute processing and fault tolerance?"}
+{"id": "cache-088", "kind": "near_repeat", "source_id": "qt018", "query": "How is a PostgreSQL standby promoted after primary failure?"}
+{"id": "cache-089", "kind": "near_repeat", "source_id": "qt019", "query": "Why does Kubernetes scheduling rely on CPU and memory requests?"}
+{"id": "cache-090", "kind": "near_repeat", "source_id": "qt020", "query": "How do Kafka consumer offsets allow replay of retained events?"}
+{"id": "cache-091", "kind": "new_query", "source_id": "qt041", "query": "Explain primary-to-standby replication and the failure risk before WAL arrives."}
+{"id": "cache-092", "kind": "new_query", "source_id": "qt042", "query": "Explain transaction snapshots together with cleanup of old row versions."}
+{"id": "cache-093", "kind": "new_query", "source_id": "qt043", "query": "Describe Kubernetes node selection and the post-binding startup step."}
+{"id": "cache-094", "kind": "new_query", "source_id": "qt044", "query": "Explain Kafka partition scaling and replica placement together."}
+{"id": "cache-095", "kind": "new_query", "source_id": "qt045", "query": "Describe both the durability benefit and transaction delay of synchronous replication."}
+{"id": "cache-096", "kind": "new_query", "source_id": "qt046", "query": "Explain nonblocking reads plus the remaining role of row-level locks."}
+{"id": "cache-097", "kind": "new_query", "source_id": "qt047", "query": "Explain the combined scheduling effect of taints, tolerations, and affinity."}
+{"id": "cache-098", "kind": "new_query", "source_id": "qt048", "query": "Explain both consumer-group parallelism and historical event replay."}
+{"id": "cache-099", "kind": "new_query", "source_id": "qt049", "query": "Describe standby promotion and the missing automatic failover responsibilities."}
+{"id": "cache-100", "kind": "new_query", "source_id": "qt050", "query": "Contrast scheduling requests with container limits."}

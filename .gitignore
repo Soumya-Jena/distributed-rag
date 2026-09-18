@@ -21,4 +21,6 @@ experiments/*
 !experiments/day-11/**
 !experiments/day-12/
 !experiments/day-12/**
+!experiments/day-13/
+!experiments/day-13/**
 .env.security

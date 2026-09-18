@@ -1,0 +1,101 @@
+id,kind,source_id,query,corpus_version,retrieval_cache_hit,retrieval_cache_available,retrieval_cache_lookup_seconds,embedding_cache_hit,embedding_cache_available,embedding_cache_lookup_seconds,embedding_compute_seconds,vector_seconds,lexical_seconds,fusion_seconds,retrieval_seconds,end_to_end_seconds,result_ids
+cache-001,unique,qt001,How does PostgreSQL streaming replication work?,2,1,1,0.0013862999621778727,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1568931001238525,196|197|199|200|194
+cache-002,unique,qt002,How does PostgreSQL MVCC determine row visibility?,2,1,1,0.0014412999153137207,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14711649995297194,193|192|195|194|199
+cache-003,unique,qt003,How does Kubernetes select a node for a Pod?,2,1,1,0.0013653000351041555,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13907529995776713,188|190|191|189|185
+cache-004,unique,qt004,What is Apache Kafka used for?,2,1,1,0.0011680000461637974,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1813238998875022,184|185|187|186|194
+cache-005,unique,qt005,What trade-off does synchronous PostgreSQL replication make?,2,1,1,0.0013747001066803932,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14374609990045428,199|196|197|200|195
+cache-006,unique,qt006,What does PostgreSQL VACUUM do?,2,1,1,0.00172180007211864,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1562971998937428,194|192|199|196|195
+cache-007,unique,qt007,How do Kubernetes taints and tolerations affect scheduling?,2,1,1,0.001247999956831336,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13002420007251203,190|188|191|189|186
+cache-008,unique,qt008,How do Kafka consumer groups divide work?,2,1,1,0.0012620999477803707,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13748380006290972,185|186|184|187|199
+cache-009,unique,qt009,Why can a PostgreSQL replication slot consume disk space?,2,1,1,0.0010393999982625246,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1592151999939233,199|200|194|196|197
+cache-010,unique,qt010,How does logical replication differ from physical streaming replication?,2,1,1,0.0012475999537855387,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15048420010134578,200|199|197|196|186
+cache-011,unique,qt011,How can database readers see stable data without making writers wait?,2,1,1,0.0012395000085234642,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15256799990311265,193|192|196|197|199
+cache-012,unique,qt012,How are change records shipped and applied to a backup database?,2,1,1,0.000991899985820055,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15123880002647638,192|195|194|196|199
+cache-013,unique,qt013,What decides where a newly requested workload runs in a cluster?,2,1,1,0.001086799893528223,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16879100003279746,190|189|188|199|191
+cache-014,unique,qt014,How can separate applications independently reread the same ordered events?,2,1,1,0.0011238998267799616,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14567629992961884,186|187|184|199|185
+cache-015,unique,qt015,Why might old copies of updated rows remain on disk?,2,1,1,0.0013182999100536108,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15100799989886582,192|193|194|199|200
+cache-016,unique,qt016,How does the cluster avoid placing a workload on an unsuitable machine?,2,1,1,0.0012994001153856516,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14924529986456037,190|188|189|199|185
+cache-017,unique,qt017,How is an event log spread across servers for parallelism and resilience?,2,1,1,0.001331100007519126,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1343010999262333,187|186|184|196|199
+cache-018,unique,qt018,What happens when the main database disappears and a copy must take writes?,2,1,1,0.0013684001751244068,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14960989984683692,199|198|194|192|196
+cache-019,unique,qt019,Why do declared resources matter more than momentary usage for workload placement?,2,1,1,0.0010442999191582203,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13522709999233484,189|190|188|194|199
+cache-020,unique,qt020,How can a stream reader go back and process earlier records again?,2,1,1,0.001487799920141697,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14368170010857284,197|196|194|199|186
+cache-021,unique,qt021,Why are old versions not getting cleaned up?,2,1,1,0.0018253999296575785,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1541019999422133,194|193|192|200|199
+cache-022,unique,qt022,Why is the replica falling behind?,2,1,1,0.0013417000882327557,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1175657999701798,197|199|196|200|186
+cache-023,unique,qt023,Why is my workload still pending?,2,1,1,0.0017347000539302826,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14304320001974702,188|189|190|197|191
+cache-024,unique,qt024,How can I read the same messages again?,2,1,1,0.0014136000536382198,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1586575999390334,186|193|187|192|196
+cache-025,unique,qt025,Why is commit slower now?,2,1,1,0.0013661999255418777,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13288130005821586,193|192|197|195|198
+cache-026,unique,qt026,Why do reads keep changing between statements?,2,1,1,0.0011509000323712826,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13355119992047548,193|192|195|199|196
+cache-027,unique,qt027,Why won't this workload run on that machine?,2,1,1,0.0016191001050174236,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1505430000834167,188|191|189|190|197
+cache-028,unique,qt028,Why isn't one reader handling every partition?,2,1,1,0.001086600124835968,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16586750000715256,186|185|193|187|184
+cache-029,unique,qt029,Why is the log filling the disk?,2,1,1,0.001231200061738491,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1358874998986721,187|194|186|196|199
+cache-030,unique,qt030,Who actually starts the containers?,2,1,1,0.0011249000672250986,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1373453000560403,191|190|188|189|185
+cache-031,unique,qt031,What does WAL do in PostgreSQL streaming replication?,2,1,1,0.0016526998952031136,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14239619998261333,196|197|199|195|194
+cache-032,unique,qt032,What does MVCC provide in PostgreSQL?,2,1,1,0.0017288001254200935,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12425119988620281,195|192|193|194|196
+cache-033,unique,qt033,What does VACUUM do with obsolete row versions?,2,1,1,0.002018699888139963,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12372069992125034,194|193|192|200|199
+cache-034,unique,qt034,How does Read Committed choose snapshots?,2,1,1,0.0009153999853879213,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15037509985268116,192|193|197|186|196
+cache-035,unique,qt035,How does Repeatable Read use a snapshot?,2,1,1,0.0015235000755637884,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.147878099931404,193|192|196|186|199
+cache-036,unique,qt036,What does node affinity do for a Pod?,2,1,1,0.0016233001369982958,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15351219987496734,190|188|191|189|185
+cache-037,unique,qt037,What does kubelet do after Pod binding?,2,1,1,0.0016264000441879034,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14728439995087683,190|191|188|187|186
+cache-038,unique,qt038,What is a Kafka topic partition?,2,1,1,0.0012185999657958746,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.137636800063774,184|185|186|187|200
+cache-039,unique,qt039,What does a Kafka consumer group do?,2,1,1,0.0011777998879551888,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1373054999858141,185|186|184|187|194
+cache-040,unique,qt040,What is a replication slot?,2,1,1,0.0011217000428587198,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12814980000257492,199|196|200|197|186
+cache-041,exact_repeat,qt001,How does PostgreSQL streaming replication work?,2,1,1,0.0016123999375849962,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16604169993661344,196|197|199|200|194
+cache-042,exact_repeat,qt002,How does PostgreSQL MVCC determine row visibility?,2,1,1,0.0012449000496417284,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1450037001632154,193|192|195|194|199
+cache-043,exact_repeat,qt003,How does Kubernetes select a node for a Pod?,2,1,1,0.001408000010997057,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1357756000943482,188|190|191|189|185
+cache-044,exact_repeat,qt004,What is Apache Kafka used for?,2,1,1,0.0012822998687624931,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1550161000341177,184|185|187|186|194
+cache-045,exact_repeat,qt005,What trade-off does synchronous PostgreSQL replication make?,2,1,1,0.0017466000281274319,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12388289999216795,199|196|197|200|195
+cache-046,exact_repeat,qt006,What does PostgreSQL VACUUM do?,2,1,1,0.0009103999473154545,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14012299990281463,194|192|199|196|195
+cache-047,exact_repeat,qt007,How do Kubernetes taints and tolerations affect scheduling?,2,1,1,0.0012437000405043364,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16632500011473894,190|188|191|189|186
+cache-048,exact_repeat,qt008,How do Kafka consumer groups divide work?,2,1,1,0.001227600034326315,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16423300001770258,185|186|184|187|199
+cache-049,exact_repeat,qt009,Why can a PostgreSQL replication slot consume disk space?,2,1,1,0.0015344999264925718,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14214119990356266,199|200|194|196|197
+cache-050,exact_repeat,qt010,How does logical replication differ from physical streaming replication?,2,1,1,0.0013825001660734415,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14914529980160296,200|199|197|196|186
+cache-051,exact_repeat,qt011,How can database readers see stable data without making writers wait?,2,1,1,0.0015143000055104494,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15949749993160367,193|192|196|197|199
+cache-052,exact_repeat,qt012,How are change records shipped and applied to a backup database?,2,1,1,0.0011497000232338905,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15050780004821718,192|195|194|196|199
+cache-053,exact_repeat,qt013,What decides where a newly requested workload runs in a cluster?,2,1,1,0.001246199943125248,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13265060004778206,190|189|188|199|191
+cache-054,exact_repeat,qt014,How can separate applications independently reread the same ordered events?,2,1,1,0.0016011998523026705,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16417450015433133,186|187|184|199|185
+cache-055,exact_repeat,qt015,Why might old copies of updated rows remain on disk?,2,1,1,0.0012133000418543816,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14959450019523501,192|193|194|199|200
+cache-056,exact_repeat,qt016,How does the cluster avoid placing a workload on an unsuitable machine?,2,1,1,0.001613199943676591,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13726869993843138,190|188|189|199|185
+cache-057,exact_repeat,qt017,How is an event log spread across servers for parallelism and resilience?,2,1,1,0.0011244998313486576,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14901729999110103,187|186|184|196|199
+cache-058,exact_repeat,qt018,What happens when the main database disappears and a copy must take writes?,2,1,1,0.0012385000009089708,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13929970003664494,199|198|194|192|196
+cache-059,exact_repeat,qt019,Why do declared resources matter more than momentary usage for workload placement?,2,1,1,0.0010033000726252794,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16330729983747005,189|190|188|194|199
+cache-060,exact_repeat,qt020,How can a stream reader go back and process earlier records again?,2,1,1,0.001325499964877963,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13126199995167553,197|196|194|199|186
+cache-061,exact_repeat,qt021,Why are old versions not getting cleaned up?,2,1,1,0.0012229999992996454,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13798959995619953,194|193|192|200|199
+cache-062,exact_repeat,qt022,Why is the replica falling behind?,2,1,1,0.001092500053346157,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.11416200012899935,197|199|196|200|186
+cache-063,exact_repeat,qt023,Why is my workload still pending?,2,1,1,0.0011163000017404556,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.11604430014267564,188|189|190|197|191
+cache-064,exact_repeat,qt024,How can I read the same messages again?,2,1,1,0.0015269999857991934,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1481469999998808,186|193|187|192|196
+cache-065,exact_repeat,qt025,Why is commit slower now?,2,1,1,0.0008651998359709978,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15267430013045669,193|192|197|195|198
+cache-066,exact_repeat,qt026,Why do reads keep changing between statements?,2,1,1,0.0014919000677764416,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14472989994101226,193|192|195|199|196
+cache-067,exact_repeat,qt027,Why won't this workload run on that machine?,2,1,1,0.0011940998956561089,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1544512000400573,188|191|189|190|197
+cache-068,exact_repeat,qt028,Why isn't one reader handling every partition?,2,1,1,0.0013648997992277145,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14882340002804995,186|185|193|187|184
+cache-069,exact_repeat,qt029,Why is the log filling the disk?,2,1,1,0.0013309000059962273,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16777129983529449,187|194|186|196|199
+cache-070,exact_repeat,qt030,Who actually starts the containers?,2,1,1,0.0014056998770684004,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14612739998847246,191|190|188|189|185
+cache-071,near_repeat,qt001,How are database changes continuously copied from a PostgreSQL primary to a standby?,2,1,1,0.0012082001194357872,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15047170012257993,196|198|197|199|195
+cache-072,near_repeat,qt002,How does PostgreSQL decide which version of a row a transaction can see?,2,1,1,0.001029999926686287,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12504809978418052,192|193|200|194|195
+cache-073,near_repeat,qt003,How is a worker machine chosen for a newly created Kubernetes workload?,2,1,1,0.0013633000198751688,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15148710017092526,188|190|191|189|185
+cache-074,near_repeat,qt004,What problem does Kafka solve for applications that exchange event data?,2,1,1,0.0015683998353779316,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12814479996450245,186|184|187|185|199
+cache-075,near_repeat,qt005,How does waiting for a standby affect durability and transaction delay?,2,1,1,0.001430699834600091,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13493989990092814,198|197|195|196|199
+cache-076,near_repeat,qt006,How does PostgreSQL make space from obsolete row versions reusable?,2,1,1,0.0012014000676572323,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14425639994442463,194|193|192|200|199
+cache-077,near_repeat,qt007,How can nodes repel workloads while particular Pods are allowed onto them?,2,1,1,0.001353000057861209,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.14172559999860823,190|188|191|189|185
+cache-078,near_repeat,qt008,How are topic partitions shared among consumers working together?,2,1,1,0.0014214999973773956,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1408563000150025,185|186|184|187|199
+cache-079,near_repeat,qt009,Why can an inactive replication consumer cause retained log data to grow?,2,1,1,0.0014122999273240566,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1346060000360012,199|197|194|186|187
+cache-080,near_repeat,qt010,How does selected-table change replication differ from copying a whole PostgreSQL cluster?,2,1,1,0.0010585999116301537,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13955949991941452,200|199|197|196|194
+cache-081,near_repeat,qt011,How does PostgreSQL provide consistent snapshots while reads and writes run concurrently?,2,1,1,0.0013946997933089733,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15229020011611283,193|192|196|195|199
+cache-082,near_repeat,qt012,How does a primary send logged changes for a standby to replay?,2,1,1,0.0013366001658141613,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13334969989955425,196|197|198|187|199
+cache-083,near_repeat,qt013,How does Kubernetes choose the worker for a new Pod?,2,1,1,0.0011503000278025866,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16148479981347919,188|191|190|189|185
+cache-084,near_repeat,qt014,How do Kafka consumer groups independently process and replay topic events?,2,1,1,0.0014739001635462046,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12146360008046031,186|185|184|187|199
+cache-085,near_repeat,qt015,Why does PostgreSQL retain obsolete row versions until they are no longer visible?,2,1,1,0.0014512999914586544,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1256834000814706,193|192|194|200|199
+cache-086,near_repeat,qt016,How does Kubernetes filter nodes that cannot satisfy a Pod?,2,1,1,0.0011152999941259623,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12876680004410446,188|190|191|189|185
+cache-087,near_repeat,qt017,How do Kafka partitions and replicas distribute processing and fault tolerance?,2,1,1,0.0015483000315725803,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13372129993513227,186|185|184|187|199
+cache-088,near_repeat,qt018,How is a PostgreSQL standby promoted after primary failure?,2,1,1,0.0009512000251561403,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.12678300007246435,198|196|197|199|187
+cache-089,near_repeat,qt019,Why does Kubernetes scheduling rely on CPU and memory requests?,2,1,1,0.0013349999208003283,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.16938129998743534,188|190|191|189|185
+cache-090,near_repeat,qt020,How do Kafka consumer offsets allow replay of retained events?,2,1,1,0.0012219001073390245,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13309230003505945,186|187|185|184|199
+cache-091,new_query,qt041,Explain primary-to-standby replication and the failure risk before WAL arrives.,2,1,1,0.0012220998760312796,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.11674420000053942,197|199|196|198|195
+cache-092,new_query,qt042,Explain transaction snapshots together with cleanup of old row versions.,2,1,1,0.0012141000479459763,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1313820998184383,192|193|194|200|195
+cache-093,new_query,qt043,Describe Kubernetes node selection and the post-binding startup step.,2,1,1,0.001009700121358037,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1547353002242744,191|188|190|189|185
+cache-094,new_query,qt044,Explain Kafka partition scaling and replica placement together.,2,1,1,0.0010341000743210316,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13077419996261597,185|186|184|187|200
+cache-095,new_query,qt045,Describe both the durability benefit and transaction delay of synchronous replication.,2,1,1,0.001397899817675352,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1367772000376135,197|199|196|186|200
+cache-096,new_query,qt046,Explain nonblocking reads plus the remaining role of row-level locks.,2,1,1,0.001236800104379654,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1304158999118954,193|192|195|194|199
+cache-097,new_query,qt047,"Explain the combined scheduling effect of taints, tolerations, and affinity.",2,1,1,0.001149799907580018,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.13864809996448457,190|189|188|186|191
+cache-098,new_query,qt048,Explain both consumer-group parallelism and historical event replay.,2,1,1,0.0015505000483244658,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.1530244001187384,186|185|187|197|184
+cache-099,new_query,qt049,Describe standby promotion and the missing automatic failover responsibilities.,2,1,1,0.0015251999720931053,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.11883920012041926,198|197|199|196|189
+cache-100,new_query,qt050,Contrast scheduling requests with container limits.,2,1,1,0.0012246000114828348,0,1,0.0,0.0,0.0,0.0,0.0,0.0,0.15384879987686872,189|190|191|188|186

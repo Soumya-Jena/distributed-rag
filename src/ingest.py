@@ -1,5 +1,6 @@
 import argparse
 import csv
+import hashlib
 import json
 from pathlib import Path
 from time import perf_counter
@@ -17,6 +18,14 @@ from src.document_loader import (
 from src.embedding_service import EmbeddingService
 
 
+def file_sha256(path: Path):
+    hasher = hashlib.sha256()
+    with path.open("rb") as file:
+        while block := file.read(1024 * 1024):
+            hasher.update(block)
+    return hasher.hexdigest()
+
+
 def ingest_document(
     path: Path,
     embedding_service: EmbeddingService,
@@ -24,11 +33,21 @@ def ingest_document(
 
     print(f"\nLoading: {path}")
 
+    content_hash = file_sha256(path)
+    with get_connection() as conn:
+        existing = conn.execute(
+            "SELECT content_hash FROM documents WHERE source_path = %s",
+            (str(path),),
+        ).fetchone()
+    if existing and existing[0] == content_hash:
+        print("Unchanged; skipping chunking and embedding.")
+        return 0, 0.0, False
+
     content = load_document(path)
 
     if not content.strip():
         print("Skipping empty document.")
-        return
+        return 0, 0.0, False
 
     chunks = chunk_text(
         content,
@@ -60,10 +79,12 @@ def ingest_document(
                 title,
                 source_path,
                 content,
+                content_hash,
                 metadata,
                 updated_at
             )
             VALUES (
+                %s,
                 %s,
                 %s,
                 %s,
@@ -74,6 +95,7 @@ def ingest_document(
             DO UPDATE SET
                 title = EXCLUDED.title,
                 content = EXCLUDED.content,
+                content_hash = EXCLUDED.content_hash,
                 metadata = EXCLUDED.metadata,
                 updated_at = NOW()
             RETURNING id;
@@ -82,6 +104,7 @@ def ingest_document(
                 path.stem,
                 str(path),
                 content,
+                content_hash,
                 json.dumps(metadata),
             ),
         ).fetchone()
@@ -144,7 +167,7 @@ def ingest_document(
     )
     print(f"Embedding time : {embedding_seconds:.3f}s")
     print(f"Chunks/sec     : {len(texts) / embedding_seconds:.2f}")
-    return len(texts), embedding_seconds
+    return len(texts), embedding_seconds, True
 
 
 def main():
@@ -172,31 +195,57 @@ def main():
         f"Found {len(documents)} documents."
     )
 
+    with get_connection() as conn:
+        existing_hashes = dict(conn.execute(
+            "SELECT source_path, content_hash FROM documents"
+        ).fetchall())
+        existing_config = conn.execute(
+            """
+            SELECT embedding_model, chunk_size, chunk_overlap
+            FROM corpus_config WHERE id = 1;
+            """
+        ).fetchone()
+        content_changed = any(
+            existing_hashes.get(str(document)) != file_sha256(document)
+            for document in documents
+        )
+        config_changed = existing_config is not None and tuple(existing_config) != (
+            EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP
+        )
+        increment = int(content_changed or config_changed)
+        # Advance the namespace before committing changed chunks. A crash can
+        # cause a conservative extra invalidation, but never stale cache reuse.
+        conn.execute(
+            """
+            INSERT INTO corpus_config (
+                id, embedding_model, chunk_size, chunk_overlap, corpus_version
+            )
+            VALUES (1, %s, %s, %s, 1)
+            ON CONFLICT (id) DO UPDATE SET
+                embedding_model = EXCLUDED.embedding_model,
+                chunk_size = EXCLUDED.chunk_size,
+                chunk_overlap = EXCLUDED.chunk_overlap,
+                corpus_version = corpus_config.corpus_version + %s,
+                updated_at = NOW();
+            """,
+            (EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP, increment),
+        )
+        conn.commit()
+        version = conn.execute(
+            "SELECT corpus_version FROM corpus_config WHERE id = 1"
+        ).fetchone()[0]
+
     total_chunks = 0
     total_embedding_seconds = 0.0
     for document in documents:
 
-        chunks, seconds = ingest_document(
+        chunks, seconds, _changed = ingest_document(
             document,
             embedding_service,
         )
         total_chunks += chunks
         total_embedding_seconds += seconds
-
-    with get_connection() as conn:
-        conn.execute(
-            """
-            INSERT INTO corpus_config (id, embedding_model, chunk_size, chunk_overlap)
-            VALUES (1, %s, %s, %s)
-            ON CONFLICT (id) DO UPDATE SET
-                embedding_model = EXCLUDED.embedding_model,
-                chunk_size = EXCLUDED.chunk_size,
-                chunk_overlap = EXCLUDED.chunk_overlap,
-                updated_at = NOW();
-            """,
-            (EMBEDDING_MODEL, CHUNK_SIZE, CHUNK_OVERLAP),
-        )
-        conn.commit()
+    print(f"Corpus version: {version} ({'changed' if increment else 'unchanged'})")
 
     if args.metrics_output:
         args.metrics_output.parent.mkdir(parents=True, exist_ok=True)
@@ -211,7 +260,10 @@ def main():
                     "embedding_model": EMBEDDING_MODEL,
                     "chunks": total_chunks,
                     "embedding_seconds": total_embedding_seconds,
-                    "chunks_per_second": total_chunks / total_embedding_seconds,
+                    "chunks_per_second": (
+                        total_chunks / total_embedding_seconds
+                        if total_embedding_seconds else 0.0
+                    ),
                 }
             )
 

@@ -1,0 +1,22 @@
+# Caching and invalidation checklist
+
+- [x] Write the hypothesis and cache-safety policy.
+- [x] Add a persistent Redis 7 service and health check.
+- [x] Add cache URLs, flags, TTLs, and explicit prompt/pipeline versions.
+- [x] Add document content hashes and a monotonic corpus version.
+- [x] Skip identical documents without re-chunking or re-embedding.
+- [x] Normalize whitespace conservatively and hash raw-query key material.
+- [x] Add deterministic configuration fingerprints.
+- [x] Implement query-embedding caching.
+- [x] Implement query-transformation caching.
+- [x] Implement identifier-only retrieval caching with live PostgreSQL hydration.
+- [x] Include the corpus version in retrieval and response keys.
+- [x] Expose per-layer hit, lookup, availability, and compute statistics.
+- [x] Build a 100-request workload with unique, exact-repeat, near-repeat, and new queries.
+- [x] Run cold and warm embedding/retrieval benchmarks.
+- [x] Measure a real cold/warm local-Qwen transformation.
+- [x] Add strict opt-in response caching with citations and provenance.
+- [x] Add response-cache stampede locking.
+- [x] Keep semantic response caching out of scope.
+- [x] Verify stale-version misses, TTLs, idempotent ingestion, and fail-open behavior.
+- [x] Add tests, chart, report, configuration, and reproduction commands.

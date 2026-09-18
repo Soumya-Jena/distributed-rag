@@ -1,0 +1,3 @@
+state,requests,embedding_hit_rate,retrieval_hit_rate,latency_p50_seconds,latency_p95_seconds,latency_p99_seconds,mean_embedding_compute_seconds,mean_embedding_end_to_end_seconds,mean_retrieval_seconds,latency_p50_seconds_reduction,latency_p95_seconds_reduction,latency_p99_seconds_reduction
+cold,100,0.3,0.3,0.1665682999882847,0.19608650498557834,0.2129104211786763,0.009791411010082811,0.0418939860118553,0.09761523098219187,,,
+warm,100,1,1,0.14371390000451356,0.16605586494551972,0.16950072598643606,0.0,0.001039737001992762,0.0,0.13720737970777494,0.15314995818945978,0.20388713221233284

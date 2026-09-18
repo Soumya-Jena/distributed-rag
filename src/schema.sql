@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS documents (
     title TEXT NOT NULL,
     source_path TEXT NOT NULL UNIQUE,
     content TEXT NOT NULL,
+    content_hash TEXT,
     metadata JSONB NOT NULL DEFAULT '{}'::jsonb,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -34,8 +35,15 @@ CREATE TABLE IF NOT EXISTS corpus_config (
     embedding_model TEXT NOT NULL,
     chunk_size INTEGER NOT NULL,
     chunk_overlap INTEGER NOT NULL,
+    corpus_version BIGINT NOT NULL DEFAULT 1,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+ALTER TABLE documents
+ADD COLUMN IF NOT EXISTS content_hash TEXT;
+
+ALTER TABLE corpus_config
+ADD COLUMN IF NOT EXISTS corpus_version BIGINT NOT NULL DEFAULT 1;
 
 ALTER TABLE chunks
 ADD COLUMN IF NOT EXISTS search_vector TSVECTOR
