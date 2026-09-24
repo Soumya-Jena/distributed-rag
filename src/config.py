@@ -106,6 +106,17 @@ RESPONSE_CACHE_ENABLED = os.getenv("RESPONSE_CACHE_ENABLED", "false").lower() in
     "1", "true", "yes",
 }
 
+OBSERVABILITY_ENABLED = os.getenv("OBSERVABILITY_ENABLED", "true").lower() in {
+    "1", "true", "yes",
+}
+METRICS_SERVER_ENABLED = os.getenv("METRICS_SERVER_ENABLED", "false").lower() in {
+    "1", "true", "yes",
+}
+METRICS_PORT = int(os.getenv("METRICS_PORT", "9108"))
+OTEL_EXPORTER = os.getenv("OTEL_EXPORTER", "none").lower()
+OTEL_ENDPOINT = os.getenv("OTEL_ENDPOINT", "http://localhost:4318/v1/traces")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
 QUERY_TRANSFORM_PROMPT_VERSION = "v1"
 GROUNDING_PROMPT_VERSION = "v3"
 SECURITY_PROMPT_VERSION = "v2"

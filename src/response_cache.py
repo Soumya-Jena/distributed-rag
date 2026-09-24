@@ -89,7 +89,9 @@ class ResponseCache:
         value = {
             field.name: getattr(result, field.name)
             for field in fields(result)
-            if field.name not in {"question", "chunks", "response_cache_hit"}
+            if field.name not in {
+                "question", "chunks", "response_cache_hit", "trace_id"
+            }
         }
         value["chunk_descriptors"] = [
             describe_chunk(chunk) for chunk in result.chunks

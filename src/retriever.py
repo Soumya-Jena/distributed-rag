@@ -6,6 +6,7 @@ from src.config import (
 )
 from src.db import get_connection
 from src.embedding_service import EmbeddingService
+from src.tracing import observed_span
 
 
 @dataclass
@@ -41,12 +42,14 @@ class Retriever:
         top_k: int = RETRIEVAL_TOP_K,
     ):
 
-        query_embedding = self.embedding_service.encode_query(query)
+        with observed_span("embedding"):
+            query_embedding = self.embedding_service.encode_query(query)
 
-        with get_connection() as conn:
+        with observed_span("vector_search", {"rag.top_k": top_k}):
+            with get_connection() as conn:
 
-            rows = conn.execute(
-                """
+                rows = conn.execute(
+                    """
                 SELECT
                     c.id,
                     d.title,
@@ -65,12 +68,12 @@ class Retriever:
                     c.embedding <=> %(embedding)s
 
                 LIMIT %(top_k)s;
-                """,
-                {
-                    "embedding": query_embedding,
-                    "top_k": top_k,
-                },
-            ).fetchall()
+                    """,
+                    {
+                        "embedding": query_embedding,
+                        "top_k": top_k,
+                    },
+                ).fetchall()
 
         return [
             RetrievedChunk(

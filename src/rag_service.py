@@ -18,6 +18,7 @@ from src.config import (
     QUERY_TRANSFORM_ENABLED,
     QUERY_TRANSFORM_MODEL,
     USE_RERANKER,
+    OBSERVABILITY_ENABLED,
 )
 
 from src.prompt import (
@@ -34,6 +35,15 @@ from src.security_policy import build_security_messages
 from src.output_guard import guard_output
 from src.cache import Cache
 from src.response_cache import ResponseCache
+from src.grounding import extract_evidence_status
+from src.runtime_metrics import (
+    COMPRESSION_RATIO, EMPTY_RETRIEVAL, ERRORS, EVIDENCE_STATUS,
+    FINAL_CONTEXT_CHUNKS, OBSERVABILITY_OVERHEAD, REFUSALS,
+    REQUEST_DURATION, REQUESTS, RETRIEVAL_CANDIDATES, STAGE_DURATION,
+    SECURITY_EVENTS, TOKENS, bounded_error_type, record_cache_stats,
+)
+from src.structured_logging import log_event, query_metadata
+from src.tracing import observed_span, telemetry_enabled, trace_id
 
 
 @dataclass
@@ -71,9 +81,13 @@ class RAGResult:
 
     prompt_tokens: int
 
+    retrieval_candidate_count: int
+
     cache_stats: dict = field(default_factory=dict)
 
     response_cache_hit: bool = False
+
+    trace_id: str = ""
 
 
 class RAGService:
@@ -93,6 +107,7 @@ class RAGService:
         context_optimizer=None,
         cache=None,
         response_cache_enabled=RESPONSE_CACHE_ENABLED,
+        observability_enabled=OBSERVABILITY_ENABLED,
     ):
 
         print(
@@ -119,6 +134,7 @@ class RAGService:
         self.context_strategy = context_strategy
         self.cache = cache or Cache()
         self.response_cache_enabled = response_cache_enabled
+        self.observability_enabled = observability_enabled
         effective_reranker = USE_RERANKER if use_reranker is None else use_reranker
         self.retrieval_pipeline = None
         self.query_transformer = query_transformer
@@ -184,7 +200,72 @@ class RAGService:
         )
 
 
-    def answer(
+    def answer(self, question: str, top_k: int = 5):
+        if not self.observability_enabled:
+            with telemetry_enabled(False):
+                return self._answer_impl(question, top_k)
+
+        started = perf_counter()
+        metadata = query_metadata(question)
+        with observed_span("rag.request", {
+            "rag.top_k": top_k,
+            "rag.query_length": metadata["query_length"],
+        }) as span:
+            request_trace_id = trace_id()
+            span.set_attribute("rag.query_hash", metadata["query_hash"])
+            log_event("request_started", top_k=top_k, **metadata)
+            try:
+                result = self._answer_impl(question, top_k)
+                result.trace_id = request_trace_id
+                telemetry_started = perf_counter()
+                self._record_result(result)
+                OBSERVABILITY_OVERHEAD.observe(perf_counter() - telemetry_started)
+                span.set_attribute("rag.context_chunks", len(result.chunks))
+                span.set_attribute("rag.response_cache_hit", result.response_cache_hit)
+                span.add_event("request.completed", {
+                    "evidence.status": extract_evidence_status(result.answer) or "missing"
+                })
+                REQUESTS.labels(status="success").inc()
+                log_event(
+                    "request_completed", context_chunks=len(result.chunks),
+                    response_cache_hit=result.response_cache_hit,
+                    duration_seconds=round(perf_counter() - started, 6),
+                )
+                return result
+            except Exception as error:
+                REQUESTS.labels(status="error").inc()
+                ERRORS.labels(stage="request", error_type=bounded_error_type(error)).inc()
+                log_event("request_failed", level=40, error_type=bounded_error_type(error))
+                raise
+            finally:
+                REQUEST_DURATION.observe(perf_counter() - started)
+
+    def _record_result(self, result):
+        RETRIEVAL_CANDIDATES.observe(result.retrieval_candidate_count)
+        FINAL_CONTEXT_CHUNKS.observe(len(result.chunks))
+        if not result.chunks:
+            EMPTY_RETRIEVAL.inc()
+        for stage, seconds in {
+            "query_transform": result.transformation_seconds,
+            "vector_search": result.vector_seconds,
+            "lexical_search": result.lexical_seconds,
+            "rrf_fusion": result.fusion_seconds,
+            "rerank": result.rerank_seconds,
+            "context_optimize": result.optimization_seconds,
+            "generation": result.generation_seconds,
+        }.items():
+            STAGE_DURATION.labels(stage=stage).observe(max(0.0, seconds))
+        TOKENS.labels(kind="prompt").observe(result.prompt_tokens)
+        TOKENS.labels(kind="context").observe(result.context_tokens)
+        TOKENS.labels(kind="output").observe(result.output_tokens)
+        COMPRESSION_RATIO.observe(max(0.0, min(1.0, result.compression_ratio)))
+        record_cache_stats(result.cache_stats)
+        status = extract_evidence_status(result.answer) or "missing"
+        EVIDENCE_STATUS.labels(status=status.lower()).inc()
+        if status == "INSUFFICIENT":
+            REFUSALS.inc()
+
+    def _answer_impl(
         self,
         question: str,
         top_k: int = 5,
@@ -194,11 +275,19 @@ class RAGService:
             return self._answer_uncached(question, top_k)
 
         key = self.response_cache.key(question, top_k)
-        value, chunks, stats = self.response_cache.get(key)
+        with observed_span("cache.response_lookup", {
+            "cache.name": "response",
+        }) as cache_span:
+            value, chunks, stats = self.response_cache.get(key)
+            cache_span.set_attribute("cache.hit", value is not None)
+            cache_span.add_event(
+                "cache.decision", {"cache.result": "hit" if value is not None else "miss"}
+            )
         if value is not None:
             value["question"] = question
             value["chunks"] = chunks
             value["response_cache_hit"] = True
+            value.setdefault("retrieval_candidate_count", len(chunks))
             value.setdefault("cache_stats", {})["response"] = stats.to_dict()
             return RAGResult(**value)
         if not stats.available:
@@ -213,6 +302,7 @@ class RAGService:
                     value["question"] = question
                     value["chunks"] = chunks
                     value["response_cache_hit"] = True
+                    value.setdefault("retrieval_candidate_count", len(chunks))
                     value.setdefault("cache_stats", {})["response"] = (
                         waited_stats.to_dict()
                     )
@@ -226,6 +316,7 @@ class RAGService:
                 value["question"] = question
                 value["chunks"] = chunks
                 value["response_cache_hit"] = True
+                value.setdefault("retrieval_candidate_count", len(chunks))
                 value.setdefault("cache_stats", {})["response"] = (
                     locked_stats.to_dict()
                 )
@@ -250,10 +341,11 @@ class RAGService:
 
         transformation_seconds = 0.0
         if self.query_strategy == "original":
-            retrieval_result = self.retrieval_pipeline.retrieve(
-                question,
-                final_k=top_k,
-            )
+            with observed_span("retrieval", {"rag.final_k": top_k}):
+                retrieval_result = self.retrieval_pipeline.retrieve(
+                    question,
+                    final_k=top_k,
+                )
             vector_seconds = retrieval_result.vector_seconds
             lexical_seconds = retrieval_result.lexical_seconds
             fusion_seconds = retrieval_result.fusion_seconds
@@ -270,11 +362,13 @@ class RAGService:
             )
         else:
             started = perf_counter()
-            variants = self.query_transformer.transform(question)
+            with observed_span("query.transform"):
+                variants = self.query_transformer.transform(question)
             transformation_seconds = perf_counter() - started
-            retrieval_result = self.multi_query_retriever.retrieve(
-                question, variants, strategy=self.query_strategy, final_k=top_k
-            )
+            with observed_span("retrieval", {"rag.final_k": top_k}):
+                retrieval_result = self.multi_query_retriever.retrieve(
+                    question, variants, strategy=self.query_strategy, final_k=top_k
+                )
             # Multi-query retrieval measures the two RRF levels together.
             vector_seconds = 0.0
             lexical_seconds = 0.0
@@ -284,13 +378,21 @@ class RAGService:
             )
             embedding_cache_stats = None
 
+        candidate_chunks = getattr(
+            retrieval_result, "candidate_chunks",
+            getattr(retrieval_result, "fused_candidates", []),
+        )
         chunks = retrieval_result.final_chunks
 
         chunks = [chunk for chunk in chunks if self._passes_threshold(chunk)]
 
-        context_result = self.context_optimizer.optimize(
-            question, chunks, strategy=self.context_strategy
-        )
+        with observed_span("context.optimize", {
+            "rag.input_chunks": len(chunks),
+            "rag.strategy": self.context_strategy,
+        }):
+            context_result = self.context_optimizer.optimize(
+                question, chunks, strategy=self.context_strategy
+            )
         chunks = context_result.chunks
 
         retrieval_seconds = (
@@ -319,6 +421,7 @@ class RAGService:
                 output_tokens=0,
                 compression_ratio=context_result.compression_ratio,
                 prompt_tokens=0,
+                retrieval_candidate_count=len(candidate_chunks),
                 cache_stats={
                     "retrieval": retrieval_cache_stats,
                     "embedding": (
@@ -339,9 +442,24 @@ class RAGService:
                 {"role": "user", "content": prompt},
             ]
         else:
-            messages, _ = build_security_messages(
-                question, chunks, self.security_mode
-            )
+            with observed_span("security.pre_generation", {
+                "security.mode": self.security_mode,
+            }) as security_span:
+                messages, security_metadata = build_security_messages(
+                    question, chunks, self.security_mode
+                )
+                security_span.add_event("security.checked", {
+                    "security.mode": self.security_mode,
+                    "security.flagged_chunks": sum(
+                        1 for item in security_metadata if item.suspicious
+                    ),
+                })
+                flagged_count = sum(
+                    1 for item in security_metadata if item.suspicious
+                )
+                SECURITY_EVENTS.labels(
+                    decision="flagged" if flagged_count else "clean"
+                ).inc()
 
         # -------------------------
         # Generation
@@ -349,11 +467,14 @@ class RAGService:
 
         start = perf_counter()
 
-        answer = self.generator.generate(
-            messages
-        )
+        with observed_span("generation"):
+            answer = self.generator.generate(messages)
         if self.security_mode == "layered":
-            answer, _ = guard_output(answer)
+            with observed_span("output.validate"):
+                answer, validation = guard_output(answer)
+                SECURITY_EVENTS.labels(
+                    decision="allowed" if validation.safe else "blocked"
+                ).inc()
 
         generation_seconds = (
             perf_counter()
@@ -383,6 +504,7 @@ class RAGService:
             prompt_tokens=(
                 self.generator.last_input_token_count
             ),
+            retrieval_candidate_count=len(candidate_chunks),
             cache_stats={
                 "retrieval": retrieval_cache_stats,
                 "embedding": (

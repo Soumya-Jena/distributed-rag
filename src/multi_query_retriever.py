@@ -7,6 +7,7 @@ from src.config import HYBRID_CANDIDATE_K, QUERY_VARIANTS, RRF_K
 from src.hybrid_retriever import HybridRetriever
 from src.query_transformer import QueryVariants
 from src.reranker import Reranker
+from src.tracing import observed_span
 
 
 VARIANT_NAMES = ("original", "semantic", "technical", "alternate")
@@ -97,11 +98,15 @@ class MultiQueryRetriever:
             )
             named_lists.append((name, result.fused_results))
         retrieval_seconds = perf_counter() - started
-        fused = cross_query_rrf(named_lists, top_k=20)
+        with observed_span("multi_query_fusion", {
+            "rag.query_variants": len(named_lists),
+        }):
+            fused = cross_query_rrf(named_lists, top_k=20)
         rerank_seconds = 0.0
         if self.use_reranker:
             started = perf_counter()
-            ranked = self.reranker.rerank(original, fused, top_k=final_k)
+            with observed_span("rerank", {"rag.candidates": len(fused)}):
+                ranked = self.reranker.rerank(original, fused, top_k=final_k)
             final = [item.chunk for item in ranked]
             rerank_seconds = perf_counter() - started
         else:

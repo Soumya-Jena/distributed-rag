@@ -15,6 +15,7 @@ from src.reranker import Reranker
 from src.retriever import RetrievedChunk, Retriever
 from src.cache import Cache, CacheStats
 from src.retrieval_cache import RetrievalCache
+from src.tracing import observed_span
 
 
 @dataclass
@@ -66,9 +67,13 @@ class RetrievalPipeline:
         candidate_k=RETRIEVAL_CANDIDATE_K,
         final_k=RERANK_TOP_K,
     ):
-        cached, cache_stats, cache_key, corpus_version = self.result_cache.get(
-            query, candidate_k, final_k
-        )
+        with observed_span("cache.retrieval_lookup", {
+            "cache.name": "retrieval",
+        }) as cache_span:
+            cached, cache_stats, cache_key, corpus_version = self.result_cache.get(
+                query, candidate_k, final_k
+            )
+            cache_span.set_attribute("cache.hit", cached is not None)
         if cached is not None:
             candidates, final = cached
             return RetrievalResult(
@@ -86,11 +91,8 @@ class RetrievalPipeline:
         fusion_seconds = 0.0
         if self.retrieval_mode == "hybrid":
             hybrid = self.hybrid_retriever.search(
-                query,
-                vector_k=candidate_k,
-                lexical_k=LEXICAL_CANDIDATE_K,
-                fused_k=HYBRID_CANDIDATE_K,
-                rrf_k=RRF_K,
+                query, vector_k=candidate_k, lexical_k=LEXICAL_CANDIDATE_K,
+                fused_k=HYBRID_CANDIDATE_K, rrf_k=RRF_K,
             )
             candidates = hybrid.fused_results
             vector_seconds = hybrid.vector_seconds
@@ -116,7 +118,8 @@ class RetrievalPipeline:
             return result
 
         started = perf_counter()
-        reranked = self.reranker.rerank(query, candidates, top_k=final_k)
+        with observed_span("rerank", {"rag.candidates": len(candidates)}):
+            reranked = self.reranker.rerank(query, candidates, top_k=final_k)
         rerank_seconds = perf_counter() - started
         result = RetrievalResult(
             candidate_chunks=candidates,

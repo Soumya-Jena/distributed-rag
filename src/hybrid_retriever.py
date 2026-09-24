@@ -4,6 +4,7 @@ from time import perf_counter
 from src.fusion import reciprocal_rank_fusion
 from src.lexical_retriever import LexicalRetriever
 from src.retriever import Retriever
+from src.tracing import observed_span
 
 
 @dataclass
@@ -34,16 +35,18 @@ class HybridRetriever:
         vector_seconds = perf_counter() - started
 
         started = perf_counter()
-        lexical_results = self.lexical_retriever.search(query, top_k=lexical_k)
+        with observed_span("lexical_search"):
+            lexical_results = self.lexical_retriever.search(query, top_k=lexical_k)
         lexical_seconds = perf_counter() - started
 
         started = perf_counter()
-        fused_results = reciprocal_rank_fusion(
-            vector_results,
-            lexical_results,
-            rrf_k=rrf_k,
-            top_k=fused_k,
-        )
+        with observed_span("rrf_fusion", {
+            "rag.vector_candidates": len(vector_results),
+            "rag.lexical_candidates": len(lexical_results),
+        }):
+            fused_results = reciprocal_rank_fusion(
+                vector_results, lexical_results, rrf_k=rrf_k, top_k=fused_k,
+            )
         fusion_seconds = perf_counter() - started
 
         return HybridRetrievalResult(

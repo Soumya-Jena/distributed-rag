@@ -1,0 +1,17 @@
+{
+  "title": "Distributed RAG - RED and Quality Signals",
+  "uid": "distributed-rag-overview",
+  "schemaVersion": 41,
+  "version": 1,
+  "refresh": "5s",
+  "time": {"from": "now-1h", "to": "now"},
+  "panels": [
+    {"type": "timeseries", "title": "Request rate", "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}, "targets": [{"expr": "sum(rate(rag_requests_total[5m]))", "legendFormat": "requests/s"}]},
+    {"type": "timeseries", "title": "Errors", "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}, "targets": [{"expr": "sum(rate(rag_requests_total{status=\"error\"}[5m]))", "legendFormat": "errors/s"}]},
+    {"type": "timeseries", "title": "Request P95", "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}, "targets": [{"expr": "histogram_quantile(0.95, sum by (le) (rate(rag_request_duration_seconds_bucket[5m])))", "legendFormat": "p95"}]},
+    {"type": "timeseries", "title": "Stage P95", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8}, "targets": [{"expr": "histogram_quantile(0.95, sum by (stage, le) (rate(rag_stage_duration_seconds_bucket[5m])))", "legendFormat": "{{stage}}"}]},
+    {"type": "timeseries", "title": "Cache outcomes", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8}, "targets": [{"expr": "sum by (cache, result) (rate(rag_cache_operations_total[5m]))", "legendFormat": "{{cache}} {{result}}"}]},
+    {"type": "timeseries", "title": "Evidence and refusals", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 17}, "targets": [{"expr": "sum by (status) (rate(rag_evidence_status_total[5m]))", "legendFormat": "{{status}}"}, {"expr": "rate(rag_refusals_total[5m])", "legendFormat": "refusals"}]},
+    {"type": "timeseries", "title": "Token P95", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17}, "targets": [{"expr": "histogram_quantile(0.95, sum by (kind, le) (rate(rag_tokens_bucket[5m])))", "legendFormat": "{{kind}}"}]}
+  ]
+}

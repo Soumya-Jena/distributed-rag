@@ -117,3 +117,15 @@ python -m evaluation.plot_cache_results
 ```
 
 Final-response caching is intentionally disabled by default. Enable it only for a controlled run with `--response-cache`; uncited, invalidly cited, insufficient, blocked, and failed outputs are not admitted. See `experiments/day-13/report.md` for measured results and limitations.
+
+## Observability
+
+The online pipeline exposes low-cardinality Prometheus metrics, nested OpenTelemetry traces, and trace-correlated JSON logs. Raw questions and document contents are excluded. Start the monitoring services and the application endpoint with:
+
+```powershell
+docker compose up -d prometheus grafana jaeger
+$env:OTEL_EXPORTER = "otlp"
+python -m src.rag "How does PostgreSQL streaming replication work?" --metrics-server
+```
+
+Prometheus is available at `http://localhost:9090`, Grafana at `http://localhost:3000`, Jaeger at `http://localhost:16686`, and application metrics at `http://localhost:9108/metrics`. See `experiments/day-14/report.md` for the metric catalog, PromQL runbook, measured overhead, and limitations.

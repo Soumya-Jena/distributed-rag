@@ -1,6 +1,8 @@
 import argparse
 
 from src.rag_service import RAGService
+from src.config import METRICS_PORT, METRICS_SERVER_ENABLED
+from src.runtime_metrics import start_metrics_server
 
 
 def main():
@@ -73,6 +75,10 @@ def main():
         action="store_false", help="Disable final-response caching",
     )
     parser.set_defaults(response_cache_enabled=None)
+    parser.add_argument(
+        "--metrics-server", action="store_true",
+        help="Expose Prometheus metrics on the configured port",
+    )
 
     args = parser.parse_args()
 
@@ -93,6 +99,9 @@ def main():
     elif args.grounding_mode == "baseline":
         # Preserve the pre-security CLI behavior for prompt A/B reproduction.
         rag_options["security_mode"] = "baseline"
+    if args.metrics_server or METRICS_SERVER_ENABLED:
+        start_metrics_server(METRICS_PORT)
+        print(f"Prometheus metrics: http://localhost:{METRICS_PORT}/metrics")
     rag = RAGService(**rag_options)
 
     result = rag.answer(
@@ -104,6 +113,7 @@ def main():
     print("======")
 
     print(result.answer)
+    print(f"\nTrace ID: {result.trace_id}")
 
     print("\nSOURCES")
     print("=======")

@@ -1,0 +1,2 @@
+{"asctime":"2026-09-24T12:00:00+05:30","levelname":"INFO","name":"distributed_rag","event":"request_started","trace_id":"70b19fd3a42a8fc1d227afe11ce08b26","query_hash":"59f2853cf21f56c7","query_length":46,"top_k":5,"message":"request_started"}
+{"asctime":"2026-09-24T12:00:01+05:30","levelname":"INFO","name":"distributed_rag","event":"request_completed","trace_id":"70b19fd3a42a8fc1d227afe11ce08b26","context_chunks":5,"response_cache_hit":false,"duration_seconds":1.142,"message":"request_completed"}

@@ -1,0 +1,154 @@
+# HELP python_gc_objects_collected_total Objects collected during gc
+# TYPE python_gc_objects_collected_total counter
+python_gc_objects_collected_total{generation="0"} 256.0
+python_gc_objects_collected_total{generation="1"} 17.0
+python_gc_objects_collected_total{generation="2"} 0.0
+# HELP python_gc_objects_uncollectable_total Uncollectable objects found during GC
+# TYPE python_gc_objects_uncollectable_total counter
+python_gc_objects_uncollectable_total{generation="0"} 0.0
+python_gc_objects_uncollectable_total{generation="1"} 0.0
+python_gc_objects_uncollectable_total{generation="2"} 0.0
+# HELP python_gc_collections_total Number of times this generation was collected
+# TYPE python_gc_collections_total counter
+python_gc_collections_total{generation="0"} 54.0
+python_gc_collections_total{generation="1"} 4.0
+python_gc_collections_total{generation="2"} 0.0
+# HELP python_info Python platform information
+# TYPE python_info gauge
+python_info{implementation="CPython",major="3",minor="12",patchlevel="14",version="3.12.14"} 1.0
+# HELP rag_requests_total Completed RAG requests
+# TYPE rag_requests_total counter
+rag_requests_total{status="success"} 1.0
+# HELP rag_requests_created Completed RAG requests
+# TYPE rag_requests_created gauge
+rag_requests_created{status="success"} 1.790259887291696e+09
+# HELP rag_request_duration_seconds End-to-end request latency
+# TYPE rag_request_duration_seconds histogram
+rag_request_duration_seconds_bucket{le="0.01"} 0.0
+rag_request_duration_seconds_bucket{le="0.025"} 0.0
+rag_request_duration_seconds_bucket{le="0.05"} 0.0
+rag_request_duration_seconds_bucket{le="0.1"} 0.0
+rag_request_duration_seconds_bucket{le="0.25"} 1.0
+rag_request_duration_seconds_bucket{le="0.5"} 1.0
+rag_request_duration_seconds_bucket{le="1.0"} 1.0
+rag_request_duration_seconds_bucket{le="2.5"} 1.0
+rag_request_duration_seconds_bucket{le="5.0"} 1.0
+rag_request_duration_seconds_bucket{le="10.0"} 1.0
+rag_request_duration_seconds_bucket{le="30.0"} 1.0
+rag_request_duration_seconds_bucket{le="60.0"} 1.0
+rag_request_duration_seconds_bucket{le="120.0"} 1.0
+rag_request_duration_seconds_bucket{le="+Inf"} 1.0
+rag_request_duration_seconds_count 1.0
+rag_request_duration_seconds_sum 0.125
+# HELP rag_request_duration_seconds_created End-to-end request latency
+# TYPE rag_request_duration_seconds_created gauge
+rag_request_duration_seconds_created 1.7902598872735941e+09
+# HELP rag_stage_duration_seconds Pipeline stage latency
+# TYPE rag_stage_duration_seconds histogram
+rag_stage_duration_seconds_bucket{le="0.001",stage="generation"} 0.0
+rag_stage_duration_seconds_bucket{le="0.005",stage="generation"} 0.0
+rag_stage_duration_seconds_bucket{le="0.01",stage="generation"} 0.0
+rag_stage_duration_seconds_bucket{le="0.025",stage="generation"} 0.0
+rag_stage_duration_seconds_bucket{le="0.05",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="0.1",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="0.25",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="0.5",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="1.0",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="2.5",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="5.0",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="10.0",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="30.0",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="60.0",stage="generation"} 1.0
+rag_stage_duration_seconds_bucket{le="+Inf",stage="generation"} 1.0
+rag_stage_duration_seconds_count{stage="generation"} 1.0
+rag_stage_duration_seconds_sum{stage="generation"} 0.05
+# HELP rag_stage_duration_seconds_created Pipeline stage latency
+# TYPE rag_stage_duration_seconds_created gauge
+rag_stage_duration_seconds_created{stage="generation"} 1.790259887291696e+09
+# HELP rag_retrieval_candidates Candidates returned before context selection
+# TYPE rag_retrieval_candidates histogram
+rag_retrieval_candidates_bucket{le="0.0"} 0.0
+rag_retrieval_candidates_bucket{le="1.0"} 0.0
+rag_retrieval_candidates_bucket{le="3.0"} 0.0
+rag_retrieval_candidates_bucket{le="5.0"} 0.0
+rag_retrieval_candidates_bucket{le="10.0"} 0.0
+rag_retrieval_candidates_bucket{le="20.0"} 0.0
+rag_retrieval_candidates_bucket{le="40.0"} 0.0
+rag_retrieval_candidates_bucket{le="80.0"} 0.0
+rag_retrieval_candidates_bucket{le="+Inf"} 0.0
+rag_retrieval_candidates_count 0.0
+rag_retrieval_candidates_sum 0.0
+# HELP rag_retrieval_candidates_created Candidates returned before context selection
+# TYPE rag_retrieval_candidates_created gauge
+rag_retrieval_candidates_created 1.7902598872735941e+09
+# HELP rag_final_context_chunks Chunks passed to generation
+# TYPE rag_final_context_chunks histogram
+rag_final_context_chunks_bucket{le="0.0"} 0.0
+rag_final_context_chunks_bucket{le="1.0"} 0.0
+rag_final_context_chunks_bucket{le="2.0"} 0.0
+rag_final_context_chunks_bucket{le="3.0"} 0.0
+rag_final_context_chunks_bucket{le="5.0"} 0.0
+rag_final_context_chunks_bucket{le="8.0"} 0.0
+rag_final_context_chunks_bucket{le="10.0"} 0.0
+rag_final_context_chunks_bucket{le="20.0"} 0.0
+rag_final_context_chunks_bucket{le="+Inf"} 0.0
+rag_final_context_chunks_count 0.0
+rag_final_context_chunks_sum 0.0
+# HELP rag_final_context_chunks_created Chunks passed to generation
+# TYPE rag_final_context_chunks_created gauge
+rag_final_context_chunks_created 1.7902598872735941e+09
+# HELP rag_empty_retrieval_total Requests with no usable evidence
+# TYPE rag_empty_retrieval_total counter
+rag_empty_retrieval_total 0.0
+# HELP rag_empty_retrieval_created Requests with no usable evidence
+# TYPE rag_empty_retrieval_created gauge
+rag_empty_retrieval_created 1.7902598872735941e+09
+# HELP rag_tokens Prompt, context, and output token counts
+# TYPE rag_tokens histogram
+# HELP rag_context_compression_ratio Optimized/original context token ratio
+# TYPE rag_context_compression_ratio histogram
+rag_context_compression_ratio_bucket{le="0.0"} 0.0
+rag_context_compression_ratio_bucket{le="0.1"} 0.0
+rag_context_compression_ratio_bucket{le="0.25"} 0.0
+rag_context_compression_ratio_bucket{le="0.5"} 0.0
+rag_context_compression_ratio_bucket{le="0.75"} 0.0
+rag_context_compression_ratio_bucket{le="0.9"} 0.0
+rag_context_compression_ratio_bucket{le="1.0"} 0.0
+rag_context_compression_ratio_bucket{le="+Inf"} 0.0
+rag_context_compression_ratio_count 0.0
+rag_context_compression_ratio_sum 0.0
+# HELP rag_context_compression_ratio_created Optimized/original context token ratio
+# TYPE rag_context_compression_ratio_created gauge
+rag_context_compression_ratio_created 1.7902598872735941e+09
+# HELP rag_cache_operations_total Cache lookup outcomes
+# TYPE rag_cache_operations_total counter
+# HELP rag_cache_lookup_duration_seconds Cache lookup latency
+# TYPE rag_cache_lookup_duration_seconds histogram
+# HELP rag_evidence_status_total Generated evidence status
+# TYPE rag_evidence_status_total counter
+# HELP rag_refusals_total Insufficient-evidence refusals
+# TYPE rag_refusals_total counter
+rag_refusals_total 0.0
+# HELP rag_refusals_created Insufficient-evidence refusals
+# TYPE rag_refusals_created gauge
+rag_refusals_created 1.7902598872735941e+09
+# HELP rag_security_events_total Security decisions
+# TYPE rag_security_events_total counter
+# HELP rag_errors_total Bounded pipeline errors
+# TYPE rag_errors_total counter
+# HELP rag_observability_overhead_seconds Time spent recording telemetry
+# TYPE rag_observability_overhead_seconds histogram
+rag_observability_overhead_seconds_bucket{le="1e-05"} 0.0
+rag_observability_overhead_seconds_bucket{le="5e-05"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.0001"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.0005"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.001"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.005"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.01"} 0.0
+rag_observability_overhead_seconds_bucket{le="0.05"} 0.0
+rag_observability_overhead_seconds_bucket{le="+Inf"} 0.0
+rag_observability_overhead_seconds_count 0.0
+rag_observability_overhead_seconds_sum 0.0
+# HELP rag_observability_overhead_seconds_created Time spent recording telemetry
+# TYPE rag_observability_overhead_seconds_created gauge
+rag_observability_overhead_seconds_created 1.7902598872735941e+09
