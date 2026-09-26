@@ -1,0 +1,8 @@
+Post-run verification against ragdb:
+
+ state  | connections
+--------+------------
+ active |           1
+
+This is a post-run snapshot, not the peak during the failed request. Use
+load_tests/diagnostics.sql concurrently in the next safe rerun.

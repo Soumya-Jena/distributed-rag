@@ -1,0 +1,6 @@
+component,max_cpu_percent,max_host_cpu_percent,max_host_memory_percent,last_memory
+rag-grafana,2.92,12.2,93.0,86.47MiB / 7.439GiB
+rag-jaeger,0.64,12.2,93.0,10.39MiB / 7.439GiB
+rag-postgres,5.82,12.2,93.0,37.82MiB / 7.439GiB
+rag-prometheus,1.03,12.2,93.0,23MiB / 7.439GiB
+rag-redis,7.51,12.2,93.0,8.902MiB / 7.439GiB

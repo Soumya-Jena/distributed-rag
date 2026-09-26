@@ -38,7 +38,7 @@ from src.response_cache import ResponseCache
 from src.grounding import extract_evidence_status
 from src.runtime_metrics import (
     COMPRESSION_RATIO, EMPTY_RETRIEVAL, ERRORS, EVIDENCE_STATUS,
-    FINAL_CONTEXT_CHUNKS, OBSERVABILITY_OVERHEAD, REFUSALS,
+    FINAL_CONTEXT_CHUNKS, OBSERVABILITY_OVERHEAD, OUTPUT_TOKENS_TOTAL, REFUSALS,
     REQUEST_DURATION, REQUESTS, RETRIEVAL_CANDIDATES, STAGE_DURATION,
     SECURITY_EVENTS, TOKENS, bounded_error_type, record_cache_stats,
 )
@@ -258,6 +258,8 @@ class RAGService:
         TOKENS.labels(kind="prompt").observe(result.prompt_tokens)
         TOKENS.labels(kind="context").observe(result.context_tokens)
         TOKENS.labels(kind="output").observe(result.output_tokens)
+        if not result.response_cache_hit:
+            OUTPUT_TOKENS_TOTAL.inc(max(0, result.output_tokens))
         COMPRESSION_RATIO.observe(max(0.0, min(1.0, result.compression_ratio)))
         record_cache_stats(result.cache_stats)
         status = extract_evidence_status(result.answer) or "missing"

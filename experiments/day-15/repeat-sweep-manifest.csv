@@ -1,0 +1,5 @@
+mode,concurrency,requests,failures,error_percent,rps,p95_ms,stop_reason
+repeat,1,11,0,0.0,1.6251450263014606,240.0,
+repeat,2,22,0,0.0,3.141852097003969,18.0,
+repeat,5,54,0,0.0,7.702205948240463,18.0,
+repeat,10,86,0,0.0,12.21587978395129,22.0,

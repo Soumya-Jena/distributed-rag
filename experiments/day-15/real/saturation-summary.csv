@@ -1,0 +1,2 @@
+mode,concurrency,goodput_rps,p50_ms,p95_ms,p99_ms,error_percent,requests,failures,meets_slo
+unique,1,0.0,2000.0,118000.0,118000.0,100.0,12,12,0

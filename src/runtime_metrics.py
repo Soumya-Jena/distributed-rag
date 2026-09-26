@@ -2,7 +2,7 @@
 
 from threading import Lock
 
-from prometheus_client import Counter, Histogram, start_http_server
+from prometheus_client import Counter, Gauge, Histogram, start_http_server
 
 
 STAGES = (
@@ -61,6 +61,18 @@ ERRORS = Counter(
 OBSERVABILITY_OVERHEAD = Histogram(
     "rag_observability_overhead_seconds", "Time spent recording telemetry",
     buckets=(.00001, .00005, .0001, .0005, .001, .005, .01, .05),
+)
+IN_FLIGHT = Gauge(
+    "rag_in_flight_requests", "Current HTTP RAG requests being processed"
+)
+HTTP_REQUESTS = Counter(
+    "rag_http_requests_total", "Load-boundary outcomes", ("status",)
+)
+GOODPUT = Counter(
+    "rag_goodput_total", "Successful non-empty RAG responses"
+)
+OUTPUT_TOKENS_TOTAL = Counter(
+    "rag_output_tokens_total", "Aggregate generated output tokens"
 )
 
 _server_lock = Lock()

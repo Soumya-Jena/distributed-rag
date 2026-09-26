@@ -129,3 +129,14 @@ python -m src.rag "How does PostgreSQL streaming replication work?" --metrics-se
 ```
 
 Prometheus is available at `http://localhost:9090`, Grafana at `http://localhost:3000`, Jaeger at `http://localhost:16686`, and application metrics at `http://localhost:9108/metrics`. See `experiments/day-14/report.md` for the metric catalog, PromQL runbook, measured overhead, and limitations.
+
+## Load and saturation testing
+
+The load boundary exposes `/health`, `/ready`, and `/query`; it is intentionally smaller than a production API. Locust supports categorized unique/repeated workloads, fixed sweeps with safety stops, gradual step load, and spike recovery. Start the service and a guarded sweep with:
+
+```powershell
+python -m uvicorn src.load_test_api:app --host 0.0.0.0 --port 8000
+python -m evaluation.run_load_sweep --mode unique --duration 5m
+```
+
+On the tested CPU/disk-offloaded environment, the genuine C1 Qwen run exited under 93% host-memory pressure and achieved zero valid goodput, so higher concurrency was intentionally not attempted. See `experiments/day-15/report.md` for the real result, separate synthetic harness validation, safety policy, and rerun procedure.

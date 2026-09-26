@@ -1,0 +1,4 @@
+mode,concurrency,requests,failures,error_percent,rps,p95_ms,stop_reason
+unique,1,9,0,0.0,1.3254820035301489,240.0,
+unique,2,18,0,0.0,2.6029472348379366,420.0,
+unique,5,31,0,0.0,4.476601832934603,730.0,p95_over_3x_baseline

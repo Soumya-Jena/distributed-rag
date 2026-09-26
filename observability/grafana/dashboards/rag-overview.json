@@ -12,6 +12,10 @@
     {"type": "timeseries", "title": "Stage P95", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8}, "targets": [{"expr": "histogram_quantile(0.95, sum by (stage, le) (rate(rag_stage_duration_seconds_bucket[5m])))", "legendFormat": "{{stage}}"}]},
     {"type": "timeseries", "title": "Cache outcomes", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8}, "targets": [{"expr": "sum by (cache, result) (rate(rag_cache_operations_total[5m]))", "legendFormat": "{{cache}} {{result}}"}]},
     {"type": "timeseries", "title": "Evidence and refusals", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 17}, "targets": [{"expr": "sum by (status) (rate(rag_evidence_status_total[5m]))", "legendFormat": "{{status}}"}, {"expr": "rate(rag_refusals_total[5m])", "legendFormat": "refusals"}]},
-    {"type": "timeseries", "title": "Token P95", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17}, "targets": [{"expr": "histogram_quantile(0.95, sum by (kind, le) (rate(rag_tokens_bucket[5m])))", "legendFormat": "{{kind}}"}]}
+    {"type": "timeseries", "title": "Token P95", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 17}, "targets": [{"expr": "histogram_quantile(0.95, sum by (kind, le) (rate(rag_tokens_bucket[5m])))", "legendFormat": "{{kind}}"}]},
+    {"type": "timeseries", "title": "Concurrency and goodput", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 26}, "targets": [{"expr": "rag_in_flight_requests", "legendFormat": "in flight"}, {"expr": "rate(rag_goodput_total[1m])", "legendFormat": "goodput/s"}]},
+    {"type": "timeseries", "title": "P50 / P95 / P99", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 26}, "targets": [{"expr": "histogram_quantile(0.50, sum by (le) (rate(rag_request_duration_seconds_bucket[5m])))", "legendFormat": "p50"}, {"expr": "histogram_quantile(0.95, sum by (le) (rate(rag_request_duration_seconds_bucket[5m])))", "legendFormat": "p95"}, {"expr": "histogram_quantile(0.99, sum by (le) (rate(rag_request_duration_seconds_bucket[5m])))", "legendFormat": "p99"}]},
+    {"type": "timeseries", "title": "HTTP outcomes", "gridPos": {"h": 9, "w": 12, "x": 0, "y": 35}, "targets": [{"expr": "sum by (status) (rate(rag_http_requests_total[1m]))", "legendFormat": "{{status}}"}]},
+    {"type": "timeseries", "title": "Aggregate output tokens/s", "gridPos": {"h": 9, "w": 12, "x": 12, "y": 35}, "targets": [{"expr": "rate(rag_output_tokens_total[1m])", "legendFormat": "tokens/s"}]}
   ]
 }

@@ -1,0 +1,9 @@
+stage,c1_p95_ms,c2_p95_ms,c5_p95_ms,c10_p95_ms,c25_p95_ms,note
+query_transform,,,,,,,not available: C1 process exited
+embedding,,,,,,,not available: C1 process exited
+vector_search,,,,,,,not available: C1 process exited
+lexical_search,,,,,,,not available: C1 process exited
+rrf_fusion,,,,,,,not available: C1 process exited
+rerank,,,,,,,not available: C1 process exited
+context_optimize,,,,,,,not available: C1 process exited
+generation,,,,,,,not available: C1 process exited before request metrics completed
