@@ -140,3 +140,17 @@ python -m evaluation.run_load_sweep --mode unique --duration 5m
 ```
 
 On the tested CPU/disk-offloaded environment, the genuine C1 Qwen run exited under 93% host-memory pressure and achieved zero valid goodput, so higher concurrency was intentionally not attempted. See `experiments/day-15/report.md` for the real result, separate synthetic harness validation, safety policy, and rerun procedure.
+
+## Corpus-volume scalability
+
+The corpus benchmark uses a guarded `ragdb_scale` database and keeps semantic quality separate from synthetic database mechanics. It streams seeded 384-dimensional vectors in bounded batches, benchmarks exact vector, GIN lexical, and hybrid retrieval with 50 fixed queries at concurrency 1, and saves storage, buffer, latency, and host-resource evidence.
+
+```powershell
+python -m evaluation.setup_scale_db
+python -m evaluation.generate_scale_data --targets 10000
+python -m evaluation.evaluate_corpus_scale --stage S1 --expected-chunks 10000
+python -m evaluation.summarize_corpus_scale
+python -m evaluation.plot_corpus_scale
+```
+
+The healthy measured ceiling was 500K chunks: exact-vector warm P95 was 164.1 ms and the relation occupied 1,051.4 MiB. The 1M tier was stopped before ingestion under the fixed host-memory gate. See `experiments/day-16/report.md` for the results and the boundary on semantic claims.

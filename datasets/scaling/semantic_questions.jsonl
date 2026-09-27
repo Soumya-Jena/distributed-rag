@@ -1,0 +1,50 @@
+{"id":"scale-q001","question":"How are PostgreSQL WAL changes sent from a primary server to a standby?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["WAL","standby"]}
+{"id":"scale-q002","question":"What does the WAL sender process do in streaming replication?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["WAL","stream"]}
+{"id":"scale-q003","question":"How does a PostgreSQL standby apply replicated WAL records?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["replay","standby"]}
+{"id":"scale-q004","question":"What durability benefit does synchronous replication provide?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["acknowledge","durability"]}
+{"id":"scale-q005","question":"Why can synchronous replication increase transaction latency?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["standby","acknowledge"]}
+{"id":"scale-q006","question":"How does asynchronous replication differ from synchronous replication?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["acknowledge","lag"]}
+{"id":"scale-q007","question":"Why can a failed or inactive replication slot retain WAL?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["slot","WAL"]}
+{"id":"scale-q008","question":"How can replication slots create disk pressure on a primary?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["retained","disk"]}
+{"id":"scale-q009","question":"What does physical PostgreSQL replication copy?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["cluster","WAL"]}
+{"id":"scale-q010","question":"What does logical replication publish to subscribers?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["row-level","tables"]}
+{"id":"scale-q011","question":"When is logical replication more selective than physical replication?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["tables","changes"]}
+{"id":"scale-q012","question":"What must be monitored to prevent unbounded WAL retention?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["replication slots","WAL"]}
+{"id":"scale-q013","question":"What is the role of a standby in PostgreSQL streaming replication?","answerable":true,"relevant_sources":["postgres-replication.md"],"expected_keywords":["receive","replay"]}
+{"id":"scale-q014","question":"How does MVCC let PostgreSQL transactions see consistent data?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["snapshot","versions"]}
+{"id":"scale-q015","question":"What information does a PostgreSQL transaction snapshot contain?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["transaction","visible"]}
+{"id":"scale-q016","question":"Why can readers and writers usually avoid blocking under MVCC?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["row versions","MVCC"]}
+{"id":"scale-q017","question":"What happens to old row versions after an UPDATE?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["obsolete","VACUUM"]}
+{"id":"scale-q018","question":"Why does PostgreSQL need VACUUM?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["reusable","bloat"]}
+{"id":"scale-q019","question":"What maintenance work does autovacuum perform?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["obsolete","row versions"]}
+{"id":"scale-q020","question":"How can long-running transactions interfere with cleanup of dead tuples?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["old snapshots","cleanup"]}
+{"id":"scale-q021","question":"What is transaction ID wraparound and why must PostgreSQL prevent it?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["wraparound","VACUUM"]}
+{"id":"scale-q022","question":"How do xmin and xmax-like transaction metadata affect row visibility?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["transaction","visible"]}
+{"id":"scale-q023","question":"Why can MVCC increase table bloat?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["obsolete","bloat"]}
+{"id":"scale-q024","question":"How does a snapshot decide whether a row version is visible?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["snapshot","row version"]}
+{"id":"scale-q025","question":"What concurrency advantage does MVCC provide?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["readers","writers"]}
+{"id":"scale-q026","question":"Why are multiple physical row versions stored for one logical row?","answerable":true,"relevant_sources":["postgres-mvcc.md"],"expected_keywords":["transactions","versions"]}
+{"id":"scale-q027","question":"How does the Kubernetes scheduler choose a node for an unscheduled Pod?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["filter","score"]}
+{"id":"scale-q028","question":"What happens during the filtering phase of Kubernetes scheduling?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["feasible","nodes"]}
+{"id":"scale-q029","question":"What happens during the scoring phase of Kubernetes scheduling?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["rank","nodes"]}
+{"id":"scale-q030","question":"How do Pod resource requests influence node selection?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["requests","capacity"]}
+{"id":"scale-q031","question":"How are resource limits different from scheduling requests?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["limits","requests"]}
+{"id":"scale-q032","question":"How do taints repel Pods from Kubernetes nodes?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["taints","repel"]}
+{"id":"scale-q033","question":"What does a toleration allow a Pod to do?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["taint","permit"]}
+{"id":"scale-q034","question":"How does node affinity constrain Pod placement?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["labels","placement"]}
+{"id":"scale-q035","question":"What does the scheduler do after selecting the best node?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["bind","Pod"]}
+{"id":"scale-q036","question":"What component starts containers after a Pod is bound to a node?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["kubelet","containers"]}
+{"id":"scale-q037","question":"Why might a Pod remain pending with insufficient resources?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["requests","node"]}
+{"id":"scale-q038","question":"How do labels participate in Kubernetes placement rules?","answerable":true,"relevant_sources":["kubernetes-scheduling.md"],"expected_keywords":["affinity","labels"]}
+{"id":"scale-q039","question":"What problem is Apache Kafka designed to solve?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["events","streaming"]}
+{"id":"scale-q040","question":"How are Kafka records organized inside a topic?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["partitions","records"]}
+{"id":"scale-q041","question":"What ordering guarantee does a Kafka partition provide?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["order","partition"]}
+{"id":"scale-q042","question":"How do partitions enable Kafka consumer parallelism?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["partitions","parallel"]}
+{"id":"scale-q043","question":"What does a Kafka offset identify?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["position","partition"]}
+{"id":"scale-q044","question":"How does a consumer group divide work among consumers?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["partition","consumer"]}
+{"id":"scale-q045","question":"Can two consumers in the same group read the same partition simultaneously?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["partition","group"]}
+{"id":"scale-q046","question":"Why can Kafka consumers replay older events?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["retention","offset"]}
+{"id":"scale-q047","question":"How does Kafka retention differ from deleting a message after consumption?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["retains","events"]}
+{"id":"scale-q048","question":"What role do brokers play in a Kafka cluster?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["brokers","partitions"]}
+{"id":"scale-q049","question":"How does replication improve Kafka durability?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["replicas","durability"]}
+{"id":"scale-q050","question":"How can a Kafka consumer resume processing from a saved position?","answerable":true,"relevant_sources":["kafka-overview.md"],"expected_keywords":["offset","resume"]}

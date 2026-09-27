@@ -1,0 +1,51 @@
+id,question,hit@1,hit@3,hit@5,recall@5,reciprocal_rank,top_1_source,top_1_similarity,retrieval_seconds
+scale-q001,How are PostgreSQL WAL changes sent from a primary server to a standby?,1,1,1,1.0,1.0,postgres-replication.md,0.7595901632553255,0.14379270002245903
+scale-q002,What does the WAL sender process do in streaming replication?,1,1,1,1.0,1.0,postgres-replication.md,0.7266549630966818,0.10193410003557801
+scale-q003,How does a PostgreSQL standby apply replicated WAL records?,1,1,1,1.0,1.0,postgres-replication.md,0.7706410884857178,0.11472460022196174
+scale-q004,What durability benefit does synchronous replication provide?,1,1,1,1.0,1.0,postgres-replication.md,0.5579385092331796,0.09659280022606254
+scale-q005,Why can synchronous replication increase transaction latency?,1,1,1,1.0,1.0,postgres-replication.md,0.5541818673393885,0.09894620021805167
+scale-q006,How does asynchronous replication differ from synchronous replication?,1,1,1,1.0,1.0,postgres-replication.md,0.5472668353001076,0.10036339983344078
+scale-q007,Why can a failed or inactive replication slot retain WAL?,1,1,1,1.0,1.0,postgres-replication.md,0.718754937871409,0.12018970027565956
+scale-q008,How can replication slots create disk pressure on a primary?,1,1,1,1.0,1.0,postgres-replication.md,0.5740771459203112,0.11184989986941218
+scale-q009,What does physical PostgreSQL replication copy?,1,1,1,1.0,1.0,postgres-replication.md,0.6452784961130074,0.12442749971523881
+scale-q010,What does logical replication publish to subscribers?,1,1,1,1.0,1.0,postgres-replication.md,0.5607535170610567,0.10203390009701252
+scale-q011,When is logical replication more selective than physical replication?,1,1,1,1.0,1.0,postgres-replication.md,0.5763215675162345,0.11046450026333332
+scale-q012,What must be monitored to prevent unbounded WAL retention?,1,1,1,1.0,1.0,postgres-replication.md,0.5035226636786475,0.10464019980281591
+scale-q013,What is the role of a standby in PostgreSQL streaming replication?,1,1,1,1.0,1.0,postgres-replication.md,0.8143585920333862,0.11307419976219535
+scale-q014,How does MVCC let PostgreSQL transactions see consistent data?,1,1,1,1.0,1.0,postgres-mvcc.md,0.7271849675664338,0.10598360002040863
+scale-q015,What information does a PostgreSQL transaction snapshot contain?,1,1,1,1.0,1.0,postgres-mvcc.md,0.5310412328814734,0.10506700025871396
+scale-q016,Why can readers and writers usually avoid blocking under MVCC?,1,1,1,1.0,1.0,postgres-mvcc.md,0.4862124936327381,0.11441019969061017
+scale-q017,What happens to old row versions after an UPDATE?,1,1,1,1.0,1.0,postgres-mvcc.md,0.5610654354095459,0.10192700009793043
+scale-q018,Why does PostgreSQL need VACUUM?,1,1,1,1.0,1.0,postgres-mvcc.md,0.5459329485893288,0.10156819969415665
+scale-q019,What maintenance work does autovacuum perform?,1,1,1,1.0,1.0,postgres-mvcc.md,0.47711083429391266,0.1182248997502029
+scale-q020,How can long-running transactions interfere with cleanup of dead tuples?,1,1,1,1.0,1.0,postgres-mvcc.md,0.39657019386976544,0.11356960004195571
+scale-q021,What is transaction ID wraparound and why must PostgreSQL prevent it?,1,1,1,1.0,1.0,postgres-mvcc.md,0.4727527845943964,0.1070035002194345
+scale-q022,How do xmin and xmax-like transaction metadata affect row visibility?,1,1,1,1.0,1.0,postgres-mvcc.md,0.4648193439948958,0.10115050012245774
+scale-q023,Why can MVCC increase table bloat?,1,1,1,1.0,1.0,postgres-mvcc.md,0.38131753317609296,0.09502100013196468
+scale-q024,How does a snapshot decide whether a row version is visible?,1,1,1,1.0,1.0,postgres-mvcc.md,0.5641420743380751,0.09722349978983402
+scale-q025,What concurrency advantage does MVCC provide?,1,1,1,1.0,1.0,postgres-mvcc.md,0.6027471300664985,0.09351180028170347
+scale-q026,Why are multiple physical row versions stored for one logical row?,1,1,1,1.0,1.0,postgres-mvcc.md,0.5899381637573242,0.10525339981541038
+scale-q027,How does the Kubernetes scheduler choose a node for an unscheduled Pod?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.8080626840554083,0.10407109977677464
+scale-q028,What happens during the filtering phase of Kubernetes scheduling?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6783503677427378,0.10156500013545156
+scale-q029,What happens during the scoring phase of Kubernetes scheduling?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.7267604090798027,0.09495669975876808
+scale-q030,How do Pod resource requests influence node selection?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6818513870239258,0.09325710032135248
+scale-q031,How are resource limits different from scheduling requests?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6104542249170418,0.09080590028315783
+scale-q032,How do taints repel Pods from Kubernetes nodes?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6569335460662842,0.1005481998436153
+scale-q033,What does a toleration allow a Pod to do?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.5803052437123521,0.09506600024178624
+scale-q034,How does node affinity constrain Pod placement?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6951064467430115,0.09645979991182685
+scale-q035,What does the scheduler do after selecting the best node?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.7259209915446657,0.0952923996374011
+scale-q036,What component starts containers after a Pod is bound to a node?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.6408971166076006,0.09437349997460842
+scale-q037,Why might a Pod remain pending with insufficient resources?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.5719097852706909,0.11314429994672537
+scale-q038,How do labels participate in Kubernetes placement rules?,1,1,1,1.0,1.0,kubernetes-scheduling.md,0.5061296224594116,0.11713439971208572
+scale-q039,What problem is Apache Kafka designed to solve?,1,1,1,1.0,1.0,kafka-overview.md,0.6809520695891268,0.09790309984236956
+scale-q040,How are Kafka records organized inside a topic?,1,1,1,1.0,1.0,kafka-overview.md,0.5894175347512292,0.1049218000844121
+scale-q041,What ordering guarantee does a Kafka partition provide?,1,1,1,1.0,1.0,kafka-overview.md,0.5930416826580962,0.1084530996158719
+scale-q042,How do partitions enable Kafka consumer parallelism?,1,1,1,1.0,1.0,kafka-overview.md,0.7803773414863754,0.10433949995785952
+scale-q043,What does a Kafka offset identify?,1,1,1,1.0,1.0,kafka-overview.md,0.5347776094211583,0.09438009979203343
+scale-q044,How does a consumer group divide work among consumers?,1,1,1,1.0,1.0,kafka-overview.md,0.4570226694928017,0.09547890024259686
+scale-q045,Can two consumers in the same group read the same partition simultaneously?,1,1,1,1.0,1.0,kafka-overview.md,0.5155414035593636,0.1120038996450603
+scale-q046,Why can Kafka consumers replay older events?,1,1,1,1.0,1.0,kafka-overview.md,0.7120973214987133,0.1004530000500381
+scale-q047,How does Kafka retention differ from deleting a message after consumption?,1,1,1,1.0,1.0,kafka-overview.md,0.5283000154316425,0.10446959966793656
+scale-q048,What role do brokers play in a Kafka cluster?,1,1,1,1.0,1.0,kafka-overview.md,0.7566572266833986,0.09872560016810894
+scale-q049,How does replication improve Kafka durability?,1,1,1,1.0,1.0,kafka-overview.md,0.7004823267172393,0.11251189978793263
+scale-q050,How can a Kafka consumer resume processing from a saved position?,1,1,1,1.0,1.0,kafka-overview.md,0.553558793451859,0.10089379968121648

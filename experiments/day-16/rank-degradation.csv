@@ -1,0 +1,51 @@
+id,question,baseline_rank,scaled_rank,rank_change,reason
+scale-q001,How are PostgreSQL WAL changes sent from a primary server to a standby?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q002,What does the WAL sender process do in streaming replication?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q003,How does a PostgreSQL standby apply replicated WAL records?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q004,What durability benefit does synchronous replication provide?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q005,Why can synchronous replication increase transaction latency?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q006,How does asynchronous replication differ from synchronous replication?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q007,Why can a failed or inactive replication slot retain WAL?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q008,How can replication slots create disk pressure on a primary?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q009,What does physical PostgreSQL replication copy?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q010,What does logical replication publish to subscribers?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q011,When is logical replication more selective than physical replication?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q012,What must be monitored to prevent unbounded WAL retention?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q013,What is the role of a standby in PostgreSQL streaming replication?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q014,How does MVCC let PostgreSQL transactions see consistent data?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q015,What information does a PostgreSQL transaction snapshot contain?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q016,Why can readers and writers usually avoid blocking under MVCC?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q017,What happens to old row versions after an UPDATE?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q018,Why does PostgreSQL need VACUUM?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q019,What maintenance work does autovacuum perform?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q020,How can long-running transactions interfere with cleanup of dead tuples?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q021,What is transaction ID wraparound and why must PostgreSQL prevent it?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q022,How do xmin and xmax-like transaction metadata affect row visibility?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q023,Why can MVCC increase table bloat?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q024,How does a snapshot decide whether a row version is visible?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q025,What concurrency advantage does MVCC provide?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q026,Why are multiple physical row versions stored for one logical row?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q027,How does the Kubernetes scheduler choose a node for an unscheduled Pod?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q028,What happens during the filtering phase of Kubernetes scheduling?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q029,What happens during the scoring phase of Kubernetes scheduling?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q030,How do Pod resource requests influence node selection?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q031,How are resource limits different from scheduling requests?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q032,How do taints repel Pods from Kubernetes nodes?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q033,What does a toleration allow a Pod to do?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q034,How does node affinity constrain Pod placement?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q035,What does the scheduler do after selecting the best node?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q036,What component starts containers after a Pod is bound to a node?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q037,Why might a Pod remain pending with insufficient resources?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q038,How do labels participate in Kubernetes placement rules?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q039,What problem is Apache Kafka designed to solve?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q040,How are Kafka records organized inside a topic?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q041,What ordering guarantee does a Kafka partition provide?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q042,How do partitions enable Kafka consumer parallelism?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q043,What does a Kafka offset identify?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q044,How does a consumer group divide work among consumers?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q045,Can two consumers in the same group read the same partition simultaneously?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q046,Why can Kafka consumers replay older events?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q047,How does Kafka retention differ from deleting a message after consumption?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q048,What role do brokers play in a Kafka cluster?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q049,How does replication improve Kafka durability?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis
+scale-q050,How can a Kafka consumer resume processing from a saved position?,1,N/A,N/A,No genuine scaled semantic corpus; synthetic vectors excluded from quality analysis

@@ -1,0 +1,2 @@
+track,questions,hit_at_1,hit_at_3,hit_at_5,recall_at_5,mrr,scope
+A-real-frozen-corpus,50,1.0,1.0,1.0,1.0,1.0,baseline only; no synthetic scaling quality claim

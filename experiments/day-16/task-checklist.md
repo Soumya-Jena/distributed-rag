@@ -1,0 +1,24 @@
+# Task checklist
+
+- [x] State a corpus-volume scalability hypothesis and controlled variables.
+- [x] Separate semantic-quality and synthetic database-mechanics tracks.
+- [x] Guard a dedicated `ragdb_scale` database.
+- [x] Define the 10K–1M scale ladder and safety stop.
+- [x] Create a reproducible manifest with dimensions, seed, and batch size.
+- [x] Stream data in bounded batches.
+- [x] Record resumable ingestion checkpoints.
+- [x] Record generation, write, total throughput, and peak process memory.
+- [x] Record table, total-index, individual-index, relation, and database sizes.
+- [x] Use 50 fixed queries at concurrency 1.
+- [x] Measure exact-vector P50/P95/P99.
+- [x] Measure GIN lexical P50/P95/P99 separately.
+- [x] Measure hybrid vector, lexical, and fusion stages.
+- [x] Save `EXPLAIN (ANALYZE, BUFFERS)` plans.
+- [x] Compare first-pass with warm-repeat without claiming a cold OS cache.
+- [x] Sample host CPU, RAM, process RSS, and disk I/O.
+- [x] Keep generation out of the main retrieval benchmark.
+- [x] Preserve the existing real-corpus quality baseline.
+- [x] Do not infer semantic quality from synthetic vectors.
+- [x] Fill measured tier results and safe-stop decision.
+- [x] Produce the comparison chart and final report.
+- [x] Run the full validation suite, commit, and push.

@@ -14,9 +14,9 @@ from src.retriever import Retriever
 DATASET = Path("datasets/evaluation/questions.jsonl")
 
 
-def load_dataset():
+def load_dataset(path=DATASET):
     records = []
-    with DATASET.open("r", encoding="utf-8") as file:
+    with path.open("r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
             if line:
@@ -47,10 +47,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--label", required=True, type=valid_label)
     parser.add_argument("--output-dir", type=Path, default=Path("experiments/day-05"))
+    parser.add_argument("--dataset", type=Path, default=DATASET)
     args = parser.parse_args()
 
     output = args.output_dir / f"{args.label}-retrieval.csv"
-    dataset = load_dataset()
+    dataset = load_dataset(args.dataset)
     retriever = Retriever()
     results = []
 

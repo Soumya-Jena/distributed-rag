@@ -1,0 +1,6 @@
+stage,chunks,table_bytes,indexes_bytes,total_relation_bytes,database_bytes,bytes_per_chunk,index_sizes_json
+S1,10000,20545536,4595712,25141248,33330867,2514.125,"{""benchmark_chunks_pkey"": 245760, ""benchmark_chunks_source_id_key"": 425984, ""idx_benchmark_chunks_search_vector"": 3923968}"
+S2,50000,102498304,11567104,114065408,122255027,2281.308,"{""benchmark_chunks_pkey"": 1138688, ""benchmark_chunks_source_id_key"": 2056192, ""idx_benchmark_chunks_search_vector"": 8347648}"
+S3,100000,205348864,18841600,224190464,232380083,2241.905,"{""benchmark_chunks_pkey"": 2260992, ""benchmark_chunks_source_id_key"": 4079616, ""idx_benchmark_chunks_search_vector"": 12476416}"
+S4,250000,512204800,40656896,552861696,561084083,2211.447,"{""benchmark_chunks_pkey"": 5627904, ""benchmark_chunks_source_id_key"": 10174464, ""idx_benchmark_chunks_search_vector"": 24829952}"
+S5,500000,1024770048,77742080,1102512128,1110734515,2205.024,"{""benchmark_chunks_pkey"": 11255808, ""benchmark_chunks_source_id_key"": 20324352, ""idx_benchmark_chunks_search_vector"": 46129152}"

@@ -1,0 +1,6 @@
+stage,chunks,cpu_percent_before,cpu_percent_after,memory_percent_before,memory_percent_after,process_rss_mib,disk_read_mib,disk_write_mib
+S1,10000,1.4,1.5,72.8,72.8,45.582,0.336,1.508
+S2,50000,0.5,3.4,74.0,74.6,45.332,2.098,4.868
+S3,100000,6.6,3.4,73.4,74.5,45.184,30.298,117.294
+S4,250000,4.2,1.0,78.3,82.3,45.027,560.018,880.856
+S5,500000,1.0,1.0,82.0,84.6,45.5,135.125,516.623

@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-09-27T19:08:58.556625+00:00",
+  "track": "B-database-mechanics",
+  "data_kind": "synthetic seeded random unit vectors and templated text",
+  "semantic_quality_claims_allowed": false,
+  "dimensions": 384,
+  "seed": 42,
+  "batch_size": 500,
+  "planned_scale_ladder": [
+    10000,
+    50000,
+    100000,
+    250000,
+    500000,
+    1000000
+  ],
+  "measured_targets": [
+    10000,
+    50000,
+    100000,
+    250000,
+    500000
+  ],
+  "largest_healthy_target": 500000,
+  "stopped_before_target": 1000000,
+  "stop_reason": "At 500K the host was at 83.8% memory with 2.49 GiB available and the relation occupied 1.10 GB; doubling the relation was projected to violate the predeclared 90% memory gate.",
+  "token_counts": "not applicable to synthetic mechanics track",
+  "semantic_baseline": {
+    "documents": 4,
+    "chunks": 17,
+    "tokens": 1457,
+    "labelled_questions": 50,
+    "data_kind": "real local markdown documents with MiniLM embeddings"
+  }
+}
