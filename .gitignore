@@ -1,5 +1,7 @@
 .venv/
 .day14-deps/
+.uv-cache/
+.uv-python/
 .env
 __pycache__/
 *.py[cod]
@@ -30,4 +32,6 @@ experiments/*
 !experiments/day-15/**
 !experiments/day-16/
 !experiments/day-16/**
+!experiments/day-18/
+!experiments/day-18/**
 .env.security

@@ -1,0 +1,11 @@
+scenario,expected,outcome,elapsed_ms,mode,notes
+vector branch unavailable,lexical-only 200,pass,0.787,degraded_lexical_only,lexical
+lexical branch unavailable,vector-only 200,pass,0.334,degraded_vector_only,vector
+both retrieval branches unavailable,controlled 503,pass,0.225,unavailable_retrieval,controlled 503 contract
+reranker unavailable,no-rerank degraded 200,pass,0.283,degraded_no_rerank,original ranking retained
+dependency repeatedly fails then recovers,breaker recovery,pass,0.017,closed,"opened, rejected, half-open probe, closed"
+PostgreSQL proxy healthy,SELECT succeeds,pass,41.264,normal,SELECT returned 1
+PostgreSQL 750ms network latency,bounded success or controlled timeout,pass,2046.045,unavailable_retrieval,ConnectionTimeout
+PostgreSQL proxy disabled,fast controlled failure,pass,13.474,unavailable_retrieval,OperationalError
+Redis 750ms network latency,fail-open cache timeout,pass,515.248,degraded_cache,TimeoutError
+dependencies restored,healthy after faults,pass,37.491,normal,PostgreSQL SELECT returned 1

@@ -58,6 +58,18 @@ SECURITY_EVENTS = Counter(
 ERRORS = Counter(
     "rag_errors_total", "Bounded pipeline errors", ("stage", "error_type")
 )
+RESILIENCE_EVENTS = Counter(
+    "rag_resilience_events_total", "Degraded and unavailable dependency events",
+    ("mode", "component"),
+)
+CIRCUIT_STATE = Gauge(
+    "rag_circuit_state", "Circuit state: closed=0, half-open=0.5, open=1",
+    ("dependency",),
+)
+BULKHEAD_REJECTIONS = Counter(
+    "rag_bulkhead_rejections_total", "Requests rejected by a resource bulkhead",
+    ("dependency",),
+)
 OBSERVABILITY_OVERHEAD = Histogram(
     "rag_observability_overhead_seconds", "Time spent recording telemetry",
     buckets=(.00001, .00005, .0001, .0005, .001, .005, .01, .05),

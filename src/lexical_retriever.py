@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from src.db import get_connection
+from src.config import RETRIEVAL_STATEMENT_TIMEOUT_MS
 
 
 @dataclass
@@ -18,7 +19,11 @@ class LexicalRetriever:
 
     def search(self, query: str, top_k: int = 20):
         with get_connection() as conn:
-            rows = conn.execute(
+            with conn.transaction():
+                conn.execute(
+                    f"SET LOCAL statement_timeout = {RETRIEVAL_STATEMENT_TIMEOUT_MS}"
+                )
+                rows = conn.execute(
                 """
                 WITH q AS (
                     SELECT websearch_to_tsquery('simple', %(query)s) AS query
@@ -38,7 +43,7 @@ class LexicalRetriever:
                 LIMIT %(top_k)s;
                 """,
                 {"query": query, "top_k": top_k},
-            ).fetchall()
+                ).fetchall()
 
         return [
             LexicalChunk(

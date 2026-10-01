@@ -6,7 +6,10 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 from src.config import METRICS_PORT
-from src.runtime_metrics import GOODPUT, HTTP_REQUESTS, IN_FLIGHT, start_metrics_server
+from src.runtime_metrics import (
+    GOODPUT, HTTP_REQUESTS, IN_FLIGHT, RESILIENCE_EVENTS, start_metrics_server,
+)
+from src.resilience import DependencyUnavailableError
 
 
 class QueryRequest(BaseModel):
@@ -50,6 +53,9 @@ def create_app(service=None):
             HTTP_REQUESTS.labels(status="success").inc()
             GOODPUT.inc()
             return {
+                "status": getattr(result, "status", "normal"),
+                "mode": (getattr(result, "service_modes", []) or ["normal"])[0],
+                "degraded_components": getattr(result, "degraded_components", []),
                 "answer": result.answer,
                 "sources": [
                     {"title": chunk.title, "chunk": chunk.chunk_index}
@@ -61,6 +67,16 @@ def create_app(service=None):
             }
         except HTTPException:
             raise
+        except DependencyUnavailableError as error:
+            HTTP_REQUESTS.labels(status="unavailable").inc()
+            RESILIENCE_EVENTS.labels(
+                mode=error.mode.value,
+                component=type(error).__name__,
+            ).inc()
+            raise HTTPException(
+                status_code=503,
+                detail={"mode": error.mode.value, "error": type(error).__name__},
+            ) from error
         except Exception as error:
             HTTP_REQUESTS.labels(status="error").inc()
             raise HTTPException(status_code=500, detail=type(error).__name__) from error

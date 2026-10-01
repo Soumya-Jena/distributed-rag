@@ -2,11 +2,11 @@ import psycopg
 
 from pgvector.psycopg import register_vector
 
-from src.config import DATABASE_URL
+from src.config import DATABASE_CONNECT_TIMEOUT, DATABASE_URL
 
 
 def get_connection():
-    conn = psycopg.connect(DATABASE_URL)
+    conn = psycopg.connect(DATABASE_URL, connect_timeout=DATABASE_CONNECT_TIMEOUT)
 
     # The vector extension must already exist before
     # registering the pgvector Python types.

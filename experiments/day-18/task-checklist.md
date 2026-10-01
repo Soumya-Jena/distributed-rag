@@ -1,0 +1,34 @@
+# Task checklist
+
+- [x] Preserve the existing retrieval, chunking, prompt, and security configuration.
+- [x] State a resilience hypothesis and controlled variables.
+- [x] Classify hard and soft dependencies with safe behavior.
+- [x] Define explicit normal, degraded, unavailable, and blocked modes.
+- [x] Define HTTP 200 degraded and HTTP 503 hard-failure contracts.
+- [x] Add development/test-only deterministic fault injection.
+- [x] Make production fault injection impossible by configuration guard.
+- [x] Add Toxiproxy for PostgreSQL and Redis on test-only ports.
+- [x] Add an idempotent proxy setup utility.
+- [x] Inject and measure PostgreSQL latency and outage.
+- [x] Configure PostgreSQL connection and statement timeouts.
+- [x] Verify Redis short timeouts and fail-open behavior.
+- [x] Retry only idempotent retrieval connection failures.
+- [x] Bound retry attempts with exponential backoff and jitter.
+- [x] Add closed/open/half-open circuit-breaker behavior.
+- [x] Verify breaker recovery without a retry storm.
+- [x] Add independent generation and reranker bulkheads.
+- [x] Add an overall request deadline and pre-stage budget checks.
+- [x] Document that an in-process timeout cannot cancel running model compute.
+- [x] Fall back to the original query when transformation fails.
+- [x] Fall back to lexical retrieval when embedding/vector retrieval fails.
+- [x] Fall back to vector retrieval when lexical retrieval fails.
+- [x] Return a controlled 503 when both retrieval branches fail.
+- [x] Continue without reranking when the reranker fails.
+- [x] Continue with raw chunks when context optimization fails.
+- [x] Treat generation failure as a controlled hard failure.
+- [x] Fail closed when security validation is unavailable.
+- [x] Fail open when observability enrichment is unavailable.
+- [x] Expose bounded resilience, circuit, and bulkhead metrics.
+- [x] Save a failure matrix, policy, runbook, and measured report.
+- [x] Verify dependency restoration after injected faults.
+- [x] Run the complete validation suite, commit, and push.

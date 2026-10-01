@@ -19,6 +19,9 @@ from src.config import (
     QUERY_TRANSFORM_MODEL,
     USE_RERANKER,
     OBSERVABILITY_ENABLED,
+    BULKHEAD_ACQUIRE_TIMEOUT_SECONDS,
+    GENERATION_BULKHEAD_SLOTS,
+    REQUEST_DEADLINE_SECONDS,
 )
 
 from src.prompt import (
@@ -44,6 +47,16 @@ from src.runtime_metrics import (
 )
 from src.structured_logging import log_event, query_metadata
 from src.tracing import observed_span, telemetry_enabled, trace_id
+from src.fault_injection import FaultInjector
+from src.resilience import (
+    Bulkhead,
+    Deadline,
+    GenerationUnavailableError,
+    ResilienceState,
+    SecurityUnavailableError,
+    ServiceMode,
+)
+from src.context_optimizer import ContextOptimizationResult
 
 
 @dataclass
@@ -89,6 +102,12 @@ class RAGResult:
 
     trace_id: str = ""
 
+    status: str = "normal"
+
+    service_modes: list = field(default_factory=list)
+
+    degraded_components: list = field(default_factory=list)
+
 
 class RAGService:
 
@@ -108,6 +127,10 @@ class RAGService:
         cache=None,
         response_cache_enabled=RESPONSE_CACHE_ENABLED,
         observability_enabled=OBSERVABILITY_ENABLED,
+        fault_injector=None,
+        generation_bulkhead=None,
+        request_deadline_seconds=REQUEST_DEADLINE_SECONDS,
+        fallback_retrieval_pipeline=None,
     ):
 
         print(
@@ -135,7 +158,18 @@ class RAGService:
         self.cache = cache or Cache()
         self.response_cache_enabled = response_cache_enabled
         self.observability_enabled = observability_enabled
+        self.faults = fault_injector or FaultInjector()
+        self.request_deadline_seconds = request_deadline_seconds
+        self.generation_bulkhead = generation_bulkhead or Bulkhead(
+            GENERATION_BULKHEAD_SLOTS,
+            BULKHEAD_ACQUIRE_TIMEOUT_SECONDS,
+            "generation",
+        )
         effective_reranker = USE_RERANKER if use_reranker is None else use_reranker
+        self._fallback_retrieval_options = {
+            "use_reranker": effective_reranker,
+            "retrieval_mode": retrieval_mode,
+        }
         self.retrieval_pipeline = None
         self.query_transformer = query_transformer
         self.multi_query_retriever = multi_query_retriever
@@ -159,6 +193,7 @@ class RAGService:
                 multi_query_retriever
                 or MultiQueryRetriever(use_reranker=effective_reranker)
             )
+        self.fallback_retrieval_pipeline = fallback_retrieval_pipeline
 
         if context_optimizer is None:
             if context_strategy == "full":
@@ -176,6 +211,7 @@ class RAGService:
                 self.generator, "count_tokens",
                 lambda text: len(text.split()),
             )
+            self.token_counter = token_counter
             context_optimizer = ContextOptimizer(
                 embedding_service=embedding_service,
                 token_counter=token_counter,
@@ -185,6 +221,10 @@ class RAGService:
                 neighbor_window=CONTEXT_NEIGHBOR_WINDOW,
             )
         self.context_optimizer = context_optimizer
+        if not hasattr(self, "token_counter"):
+            self.token_counter = getattr(
+                self.generator, "count_tokens", lambda text: len(text.split())
+            )
         retrieval_fingerprint = (
             self.retrieval_pipeline.result_cache.config_fingerprint
             if self.retrieval_pipeline is not None
@@ -218,8 +258,14 @@ class RAGService:
                 result = self._answer_impl(question, top_k)
                 result.trace_id = request_trace_id
                 telemetry_started = perf_counter()
-                self._record_result(result)
-                OBSERVABILITY_OVERHEAD.observe(perf_counter() - telemetry_started)
+                try:
+                    self.faults.apply("observability")
+                    self._record_result(result)
+                    OBSERVABILITY_OVERHEAD.observe(perf_counter() - telemetry_started)
+                except Exception:
+                    # Telemetry is intentionally fail-open: an exporter or metric
+                    # failure must never convert a valid grounded answer into a 500.
+                    pass
                 span.set_attribute("rag.context_chunks", len(result.chunks))
                 span.set_attribute("rag.response_cache_hit", result.response_cache_hit)
                 span.add_event("request.completed", {
@@ -337,12 +383,16 @@ class RAGService:
         top_k: int = 5,
     ):
 
+        deadline = Deadline(self.request_deadline_seconds)
+        state = ResilienceState()
+
         # -------------------------
         # Retrieval
         # -------------------------
 
         transformation_seconds = 0.0
         if self.query_strategy == "original":
+            deadline.require("retrieval")
             with observed_span("retrieval", {"rag.final_k": top_k}):
                 retrieval_result = self.retrieval_pipeline.retrieve(
                     question,
@@ -364,21 +414,53 @@ class RAGService:
             )
         else:
             started = perf_counter()
-            with observed_span("query.transform"):
-                variants = self.query_transformer.transform(question)
-            transformation_seconds = perf_counter() - started
-            with observed_span("retrieval", {"rag.final_k": top_k}):
-                retrieval_result = self.multi_query_retriever.retrieve(
-                    question, variants, strategy=self.query_strategy, final_k=top_k
+            deadline.require("query transformation")
+            try:
+                self.faults.apply("query_transform")
+                with observed_span("query.transform"):
+                    variants = self.query_transformer.transform(question)
+            except Exception:
+                state.degrade(ServiceMode.DEGRADED_QUERY, "query_transform")
+                deadline.require("fallback retrieval")
+                if self.fallback_retrieval_pipeline is None:
+                    self.fallback_retrieval_pipeline = RetrievalPipeline(
+                        **self._fallback_retrieval_options
+                    )
+                retrieval_result = self.fallback_retrieval_pipeline.retrieve(
+                    question, final_k=top_k
                 )
-            # Multi-query retrieval measures the two RRF levels together.
-            vector_seconds = 0.0
-            lexical_seconds = 0.0
-            fusion_seconds = retrieval_result.retrieval_seconds
-            retrieval_cache_stats = getattr(
-                retrieval_result, "cache_stats", {}
+                transformation_seconds = perf_counter() - started
+                vector_seconds = retrieval_result.vector_seconds
+                lexical_seconds = retrieval_result.lexical_seconds
+                fusion_seconds = retrieval_result.fusion_seconds
+                retrieval_cache_stats = {}
+                embedding_cache_stats = None
+            else:
+                transformation_seconds = perf_counter() - started
+                deadline.require("retrieval")
+                with observed_span("retrieval", {"rag.final_k": top_k}):
+                    retrieval_result = self.multi_query_retriever.retrieve(
+                        question, variants, strategy=self.query_strategy, final_k=top_k
+                    )
+                vector_seconds = 0.0
+                lexical_seconds = 0.0
+                fusion_seconds = retrieval_result.retrieval_seconds
+                retrieval_cache_stats = getattr(retrieval_result, "cache_stats", {})
+                embedding_cache_stats = None
+
+        retrieval_modes = getattr(retrieval_result, "service_modes", []) or []
+        retrieval_components = (
+            getattr(retrieval_result, "degraded_components", []) or []
+        )
+        for index, mode in enumerate(retrieval_modes):
+            component = (
+                retrieval_components[index]
+                if index < len(retrieval_components) else mode.value
             )
-            embedding_cache_stats = None
+            state.degrade(mode, component, record=False)
+        for component in retrieval_components:
+            if component not in state.degraded_components:
+                state.degraded_components.append(component)
 
         candidate_chunks = getattr(
             retrieval_result, "candidate_chunks",
@@ -392,9 +474,26 @@ class RAGService:
             "rag.input_chunks": len(chunks),
             "rag.strategy": self.context_strategy,
         }):
-            context_result = self.context_optimizer.optimize(
-                question, chunks, strategy=self.context_strategy
-            )
+            try:
+                deadline.require("context optimization")
+                self.faults.apply("context_optimizer")
+                context_result = self.context_optimizer.optimize(
+                    question, chunks, strategy=self.context_strategy
+                )
+            except Exception:
+                state.degrade(ServiceMode.DEGRADED_RAW_CONTEXT, "context_optimizer")
+                tokens = sum(self.token_counter(chunk.content) for chunk in chunks)
+                context_result = ContextOptimizationResult(
+                    chunks=chunks,
+                    original_tokens=tokens,
+                    optimized_tokens=tokens,
+                    removed_tokens=0,
+                    compression_ratio=1.0,
+                    optimization_seconds=0.0,
+                    candidates_before=len(chunks),
+                    candidates_after=len(chunks),
+                    unique_sources=len({chunk.source_path for chunk in chunks}),
+                )
         chunks = context_result.chunks
 
         retrieval_seconds = (
@@ -431,6 +530,9 @@ class RAGService:
                         if embedding_cache_stats else {}
                     ),
                 },
+                status=state.status,
+                service_modes=[mode.value for mode in state.modes],
+                degraded_components=state.degraded_components,
             )
 
         # -------------------------
@@ -447,9 +549,15 @@ class RAGService:
             with observed_span("security.pre_generation", {
                 "security.mode": self.security_mode,
             }) as security_span:
-                messages, security_metadata = build_security_messages(
-                    question, chunks, self.security_mode
-                )
+                try:
+                    self.faults.apply("security_validator")
+                    messages, security_metadata = build_security_messages(
+                        question, chunks, self.security_mode
+                    )
+                except Exception as exc:
+                    raise SecurityUnavailableError(
+                        "Security validation is unavailable; failing closed"
+                    ) from exc
                 security_span.add_event("security.checked", {
                     "security.mode": self.security_mode,
                     "security.flagged_chunks": sum(
@@ -469,11 +577,24 @@ class RAGService:
 
         start = perf_counter()
 
+        deadline.require("generation")
         with observed_span("generation"):
-            answer = self.generator.generate(messages)
+            try:
+                self.faults.apply("generator")
+                answer = self.generation_bulkhead.call(
+                    lambda: self.generator.generate(messages)
+                )
+            except Exception as exc:
+                raise GenerationUnavailableError("Generation is unavailable") from exc
         if self.security_mode == "layered":
             with observed_span("output.validate"):
-                answer, validation = guard_output(answer)
+                try:
+                    self.faults.apply("output_validator")
+                    answer, validation = guard_output(answer)
+                except Exception as exc:
+                    raise SecurityUnavailableError(
+                        "Output validation is unavailable; failing closed"
+                    ) from exc
                 SECURITY_EVENTS.labels(
                     decision="allowed" if validation.safe else "blocked"
                 ).inc()
@@ -520,6 +641,9 @@ class RAGService:
                     else {}
                 ),
             },
+            status=state.status,
+            service_modes=[mode.value for mode in state.modes],
+            degraded_components=state.degraded_components,
         )
 
     @staticmethod

@@ -154,3 +154,16 @@ python -m evaluation.plot_corpus_scale
 ```
 
 The healthy measured ceiling was 500K chunks: exact-vector warm P95 was 164.1 ms and the relation occupied 1,051.4 MiB. The 1M tier was stopped before ingestion under the fixed host-memory gate. See `experiments/day-16/report.md` for the results and the boundary on semantic claims.
+
+## Resilience and graceful degradation
+
+The service now distinguishes soft dependency loss from hard safety boundaries. A vector/embedding failure falls back to lexical retrieval, a lexical failure falls back to vector retrieval, and reranker or context-optimizer failures preserve the earlier evidence. Loss of both retrieval paths, generation, or security validation returns an explicit HTTP 503 instead of producing an unsupported answer. Cache and observability failures remain fail-open.
+
+```powershell
+docker compose up -d postgres redis toxiproxy
+python -m evaluation.setup_toxiproxy
+python -m evaluation.run_resilience --network
+python -m pytest tests/test_resilience.py -q
+```
+
+`FAULT_INJECTION_ENABLED` is accepted only when `ENVIRONMENT` is `development` or `test`. Toxiproxy uses separate test ports (`15432` for PostgreSQL and `16379` for Redis), and the runner restores healthy routes after each fault. See `experiments/day-18/report.md` for the failure matrix, measured timeouts, recovery result, and limitations.

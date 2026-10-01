@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from src.config import (
     EMBEDDING_MODEL,
+    RETRIEVAL_STATEMENT_TIMEOUT_MS,
     RETRIEVAL_TOP_K,
 )
 from src.db import get_connection
@@ -47,8 +48,11 @@ class Retriever:
 
         with observed_span("vector_search", {"rag.top_k": top_k}):
             with get_connection() as conn:
-
-                rows = conn.execute(
+                with conn.transaction():
+                    conn.execute(
+                        f"SET LOCAL statement_timeout = {RETRIEVAL_STATEMENT_TIMEOUT_MS}"
+                    )
+                    rows = conn.execute(
                     """
                 SELECT
                     c.id,
@@ -73,7 +77,7 @@ class Retriever:
                         "embedding": query_embedding,
                         "top_k": top_k,
                     },
-                ).fetchall()
+                    ).fetchall()
 
         return [
             RetrievedChunk(
