@@ -1,0 +1,5 @@
+scenario,api_live,api_ready,query,result,recovery
+healthy,200,200,200,normal with 3 sources,not required
+model_server_stopped,200,503,503,hard dependency refused,restarted model server and readiness returned 200
+redis_stopped,200,200,200,cache failed open,restarted Redis and service remained ready
+postgres_and_redis_recreated,200,200,200,named volumes retained 17 chunks,not required

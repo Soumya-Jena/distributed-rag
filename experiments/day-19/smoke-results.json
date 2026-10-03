@@ -1,0 +1,18 @@
+{
+  "live_status": 200,
+  "ready_status": 200,
+  "readiness": {
+    "status": "ready",
+    "checks": {
+      "postgres": true,
+      "embedding": true,
+      "generation": true,
+      "security": true
+    }
+  },
+  "query_status": 200,
+  "request_id_round_trip": true,
+  "answer_status": "normal",
+  "source_count": 3,
+  "trace_id_present": true
+}

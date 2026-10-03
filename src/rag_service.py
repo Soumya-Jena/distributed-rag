@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from time import perf_counter
 
-from src.generator import LocalGenerator
+from src.generation.client import create_generation_client
 
 from src.config import (
     GROUNDING_MODE,
@@ -144,7 +144,7 @@ class RAGService:
         if security_mode != "baseline" and grounding_mode != "strict":
             raise ValueError("Structured security modes require strict grounding")
         self.security_mode = security_mode
-        self.generator = generator or LocalGenerator()
+        self.generator = generator or create_generation_client()
         if query_strategy not in {
             "original", "rewrite_only", "original_rewrite", "multi_query"
         }:

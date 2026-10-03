@@ -167,3 +167,24 @@ python -m pytest tests/test_resilience.py -q
 ```
 
 `FAULT_INJECTION_ENABLED` is accepted only when `ENVIRONMENT` is `development` or `test`. Toxiproxy uses separate test ports (`15432` for PostgreSQL and `16379` for Redis), and the runner restores healthy routes after each fault. See `experiments/day-18/report.md` for the failure matrix, measured timeouts, recovery result, and limitations.
+
+## Containerized deployment
+
+The deployment separates the public RAG API from the private generation model server. PostgreSQL, Redis, and the model endpoint stay on an internal network; only the API publishes a production port. The same non-root, multi-stage image is reused for the API, model server, migrations, and ingestion jobs.
+
+Create `secrets/postgres_password.txt`, then start the core stack:
+
+```powershell
+docker compose up -d postgres redis model-server
+docker compose --profile tools run --rm db-migrate
+docker compose up -d rag-api
+python -m evaluation.verify_deployment
+```
+
+For local development, the override publishes PostgreSQL, Redis, and the model server and mounts source code read-only:
+
+```powershell
+docker compose -f docker-compose.yml -f compose.dev.yaml up -d
+```
+
+Use `--profile tools` for migration and ingestion jobs, `--profile observability` for Prometheus/Grafana/Jaeger, and `--profile resilience` for Toxiproxy. Model weights live in the `model_cache` volume rather than the image. See `experiments/day-19/runbook.md` and `experiments/day-19/report.md` for operations, measured results, and limitations.

@@ -1,13 +1,35 @@
 import os
+from pathlib import Path
+from urllib.parse import quote_plus
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
+def read_secret(name, default=None):
+    configured = os.getenv(f"{name.upper()}_FILE")
+    path = Path(configured or f"/run/secrets/{name}")
+    if path.is_file():
+        return path.read_text(encoding="utf-8").strip()
+    return default
+
+
+DATABASE_HOST = os.getenv("DATABASE_HOST", "localhost")
+DATABASE_PORT = int(os.getenv("DATABASE_PORT", "5432"))
+DATABASE_NAME = os.getenv("DATABASE_NAME", "ragdb")
+DATABASE_USER = os.getenv("DATABASE_USER", "rag")
+DATABASE_PASSWORD = read_secret(
+    "postgres_password", os.getenv("DATABASE_PASSWORD", "rag")
+)
+
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://rag:rag@localhost:5432/ragdb",
+    (
+        f"postgresql://{quote_plus(DATABASE_USER)}:"
+        f"{quote_plus(DATABASE_PASSWORD)}@{DATABASE_HOST}:"
+        f"{DATABASE_PORT}/{DATABASE_NAME}"
+    ),
 )
 
 
@@ -20,6 +42,12 @@ EMBEDDING_MODEL = os.getenv(
 GENERATION_MODEL = os.getenv(
     "GENERATION_MODEL",
     "Qwen/Qwen2.5-1.5B-Instruct",
+)
+
+GENERATION_BACKEND = os.getenv("GENERATION_BACKEND", "local").lower()
+GENERATION_URL = os.getenv("GENERATION_URL", "http://localhost:8010")
+GENERATION_TIMEOUT_SECONDS = float(
+    os.getenv("GENERATION_TIMEOUT_SECONDS", "120")
 )
 
 

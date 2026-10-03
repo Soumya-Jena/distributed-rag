@@ -1,0 +1,6 @@
+{
+  "requests": 100,
+  "mean_boundary_overhead_ms": 47.2793,
+  "p50_boundary_overhead_ms": 47.7527,
+  "p95_boundary_overhead_ms": 50.4928
+}

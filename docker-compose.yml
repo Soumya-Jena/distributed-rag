@@ -1,74 +1,195 @@
+name: distributed-rag
+
+x-runtime: &runtime
+  build:
+    context: .
+    target: runtime
+  image: distributed-rag:local
+  init: true
+  stop_grace_period: 30s
+  networks: [backend, egress]
+  security_opt:
+    - no-new-privileges:true
+
+x-database-environment: &database-environment
+  DATABASE_HOST: postgres
+  DATABASE_PORT: "5432"
+  DATABASE_NAME: ${POSTGRES_DB:-ragdb}
+  DATABASE_USER: ${POSTGRES_USER:-rag}
+  DATABASE_PASSWORD_FILE: /run/secrets/postgres_password
+
 services:
   postgres:
     image: pgvector/pgvector:pg17
-    container_name: rag-postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-rag}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rag}
       POSTGRES_DB: ${POSTGRES_DB:-ragdb}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets: [postgres_password]
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-rag} -d ${POSTGRES_DB:-ragdb}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+    networks: [backend]
 
   redis:
     image: redis:7-alpine
-    container_name: rag-redis
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
+      timeout: 2s
+      retries: 5
+    restart: unless-stopped
+    networks: [backend]
+
+  model-server:
+    <<: *runtime
+    command: ["uvicorn", "src.model_server.app:app", "--host", "0.0.0.0", "--port", "8010"]
+    environment:
+      HF_HOME: /home/rag/.cache/huggingface
+      MODEL_SERVER_FAKE: ${MODEL_SERVER_FAKE:-false}
+      GENERATION_MODEL: ${GENERATION_MODEL:-Qwen/Qwen2.5-1.5B-Instruct}
+      GENERATION_BULKHEAD_SLOTS: ${GENERATION_BULKHEAD_SLOTS:-1}
+    volumes:
+      - model_cache:/home/rag/.cache/huggingface
+    expose: ["8010"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8010/ready', timeout=2)"]
+      interval: 10s
       timeout: 3s
-      retries: 10
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: ${MODEL_SERVER_MEMORY_LIMIT:-8G}
+
+  rag-api:
+    <<: *runtime
+    command: ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      <<: *database-environment
+      GENERATION_BACKEND: http
+      GENERATION_URL: http://model-server:8010
+      GENERATION_TIMEOUT_SECONDS: ${GENERATION_TIMEOUT_SECONDS:-120}
+      REDIS_URL: redis://redis:6379/0
+      HF_HOME: /home/rag/.cache/huggingface
+      METRICS_SERVER_ENABLED: "true"
+      METRICS_PORT: "9108"
+    secrets: [postgres_password]
+    volumes:
+      - model_cache:/home/rag/.cache/huggingface
+    ports:
+      - "${RAG_API_PORT:-8000}:8000"
+    expose: ["9108"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      model-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/ready', timeout=2)"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: ${RAG_API_MEMORY_LIMIT:-4G}
+
+  db-migrate:
+    <<: *runtime
+    command: ["python", "-m", "src.database.migrate"]
+    environment:
+      <<: *database-environment
+    secrets: [postgres_password]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles: [tools]
+    restart: "no"
+
+  ingest:
+    <<: *runtime
+    command: ["python", "-m", "src.ingest", "/data/raw"]
+    environment:
+      <<: *database-environment
+      HF_HOME: /home/rag/.cache/huggingface
+    secrets: [postgres_password]
+    volumes:
+      - model_cache:/home/rag/.cache/huggingface
+    depends_on:
+      postgres:
+        condition: service_healthy
+    profiles: [tools]
+    restart: "no"
 
   prometheus:
     image: prom/prometheus:v3.5.0
-    container_name: rag-prometheus
     command: ["--config.file=/etc/prometheus/prometheus.yml"]
-    ports:
-      - "${PROMETHEUS_PORT:-9090}:9090"
     volumes:
       - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "${PROMETHEUS_PORT:-9090}:9090"
+    profiles: [observability]
+    networks: [backend]
 
   grafana:
     image: grafana/grafana:12.1.0
-    container_name: rag-grafana
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
-    ports:
-      - "${GRAFANA_PORT:-3000}:3000"
     volumes:
       - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
       - grafana_data:/var/lib/grafana
+    ports:
+      - "${GRAFANA_PORT:-3000}:3000"
     depends_on: [prometheus, jaeger]
+    profiles: [observability]
+    networks: [backend]
 
   jaeger:
     image: jaegertracing/all-in-one:1.68.0
-    container_name: rag-jaeger
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
     ports:
-      - "4317:4317"
-      - "4318:4318"
       - "16686:16686"
+    profiles: [observability]
+    networks: [backend]
 
   toxiproxy:
     image: ghcr.io/shopify/toxiproxy:2.12.0
-    container_name: rag-toxiproxy
     ports:
       - "8474:8474"
       - "15432:15432"
       - "16379:16379"
     depends_on: [postgres, redis]
+    profiles: [resilience]
+    networks: [backend]
 
 volumes:
   postgres_data:
   redis_data:
+  model_cache:
   grafana_data:
+
+networks:
+  backend:
+    internal: true
+  egress:
+
+secrets:
+  postgres_password:
+    file: ${POSTGRES_PASSWORD_FILE:-./secrets/postgres_password.txt}

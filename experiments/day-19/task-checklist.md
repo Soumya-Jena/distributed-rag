@@ -1,0 +1,35 @@
+# Task checklist
+
+- [x] Freeze the previous architecture with a rollback tag.
+- [x] State a packaging hypothesis and controlled variables.
+- [x] Define a generator protocol independent of the model implementation.
+- [x] Preserve local generation through an in-process adapter.
+- [x] Add a private model server with `/internal/generate`.
+- [x] Add a bounded HTTP generation client.
+- [x] Route query transformation through the configured generation client.
+- [x] Put the generation concurrency bulkhead in the model-owning service.
+- [x] Separate liveness from dependency-aware readiness on both services.
+- [x] Make Redis explicitly absent from the hard readiness path.
+- [x] Build one reusable multi-stage Python 3.11 image.
+- [x] Run the application image as a fixed non-root user.
+- [x] Bake source into deployment images and isolate read-only dev mounts.
+- [x] Add a strict `.dockerignore` and avoid baking secrets or model weights.
+- [x] Persist the model cache in a named volume.
+- [x] Compose PostgreSQL, Redis, model server, and public API.
+- [x] Keep PostgreSQL, Redis, and the model endpoint private in production.
+- [x] Publish local dependency ports only in the development override.
+- [x] Mount the PostgreSQL password as a Compose secret.
+- [x] Read database secrets from files and keep `.env` non-secret.
+- [x] Preserve PostgreSQL and Redis data in named volumes.
+- [x] Add an explicit, idempotent migration command.
+- [x] Add an opt-in ingestion job under the tools profile.
+- [x] Add opt-in observability and resilience profiles.
+- [x] Add resource limits, restart policies, init, and graceful stop periods.
+- [x] Verify health contracts and an end-to-end packaged query.
+- [x] Verify hard model failure containment and recovery.
+- [x] Verify Redis loss remains fail-open.
+- [x] Verify corpus and model-cache persistence through recreation.
+- [x] Measure the HTTP generation-boundary overhead.
+- [x] Save architecture, failure matrix, runbook, results, and limitations.
+- [x] Run the complete validation suite (83 tests passed).
+- [x] Commit, tag, and push.

@@ -1,0 +1,26 @@
+services:
+  postgres:
+    networks:
+      - backend
+      - egress
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+
+  redis:
+    networks:
+      - backend
+      - egress
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+
+  model-server:
+    ports:
+      - "${MODEL_SERVER_PORT:-8010}:8010"
+
+  rag-api:
+    volumes:
+      - ./src:/app/src:ro
+
+  ingest:
+    volumes:
+      - ./datasets:/data:ro

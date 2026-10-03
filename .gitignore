@@ -34,4 +34,8 @@ experiments/*
 !experiments/day-16/**
 !experiments/day-18/
 !experiments/day-18/**
+!experiments/day-19/
+!experiments/day-19/**
 .env.security
+secrets/*
+!secrets/.gitkeep
